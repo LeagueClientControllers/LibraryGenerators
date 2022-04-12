@@ -1,28 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="91ff0f71-5723-4406-b246-a58e604306ac" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/.idea/libraries/Dart_SDK.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/DartLibraryGenerator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+    <list default="true" id="8827b501-acb9-4f9f-a1ca-71016aa1d11f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_category.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_documentation_node.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_entity.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_entity_declaration.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_entity_property.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_enum.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_enum_member.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_method.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_property_type.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_scheme.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/utilities/json_utilities.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/utilities/library_generator_exception.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/LibraryGenerators.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LibraryGenerators.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dart File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="27h3VYEni9ocY6irByh4bQIVBIh" />
+  <component name="ProjectId" id="27heHKzLHQmxMB9JaqVYqQasQVx" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -32,31 +60,19 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="dart.analysis.tool.window.visible" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/DartLibraryGenerator" />
-    <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="dart.settings" />
-  </component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Development\GitHub\LeagueClientControllers\LibraryGenerators\DartLibraryGenerator" />
-    </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="DartLibraryGenerator" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
-      <option name="filePath" value="$PROJECT_DIR$/DartLibraryGenerator/bin/dart_library_generator.dart" />
-      <option name="workingDirectory" value="$PROJECT_DIR$/DartLibraryGenerator" />
-      <method v="2" />
-    </configuration>
+    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.notifications" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="91ff0f71-5723-4406-b246-a58e604306ac" name="Changes" comment="" />
-      <created>1649758515228</created>
+      <changelist id="8827b501-acb9-4f9f-a1ca-71016aa1d11f" name="Changes" comment="" />
+      <created>1649776667717</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1649758515228</updated>
-      <workItem from="1649758517024" duration="1559000" />
+      <updated>1649776667717</updated>
+      <workItem from="1649776670911" duration="903000" />
+      <workItem from="1649784842342" duration="1769000" />
+      <workItem from="1649796992971" duration="4043000" />
     </task>
     <servers />
   </component>
@@ -73,9 +89,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>
