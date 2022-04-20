@@ -9,9 +9,9 @@ class ApiModel {
     required this.enums,
   });
 
-  List<ApiEntityDeclaration> declarations;
-  List<ApiEntity> entities;
-  List<ApiEnum> enums;
+  final List<ApiEntityDeclaration> declarations;
+  final List<ApiEntity> entities;
+  final List<ApiEnum> enums;
 
   factory ApiModel.fromJson(Map<String, dynamic> json) => ApiModel(
     declarations: List<ApiEntityDeclaration>.from(json["declarations"].map((x) => ApiEntityDeclaration.fromJson(x))),

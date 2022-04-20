@@ -1,4 +1,4 @@
-import '../utilities/json_utilities.dart';
+import '../utils/json_utilities.dart';
 import 'api_documentation_node.dart';
 
 class ApiMethod {
@@ -11,12 +11,12 @@ class ApiMethod {
     required this.requireAccessToken,
   });
 
-  String name;
-  List<ApiDocumentationNode> docs;
-  int? parametersId;
-  int responseId;
-  bool requireAccessToken;
-  MethodAccessPolicy? accessibleFrom;
+  final String name;
+  final List<ApiDocumentationNode> docs;
+  final int? parametersId;
+  final int responseId;
+  final bool requireAccessToken;
+  final MethodAccessPolicy? accessibleFrom;
 
   factory ApiMethod.fromJson(Map<String, dynamic> json) => ApiMethod(
     name: json["name"],

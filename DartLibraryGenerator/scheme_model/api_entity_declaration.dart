@@ -1,4 +1,4 @@
-import '../utilities/json_utilities.dart';
+import '../utils/json_utilities.dart';
 
 class ApiEntityDeclaration {
   ApiEntityDeclaration({
@@ -8,10 +8,10 @@ class ApiEntityDeclaration {
     required this.path,
   });
 
-  int id;
-  ApiEntityKind kind;
-  String name;
-  String path;
+  final int id;
+  final ApiEntityKind kind;
+  final String name;
+  final String path;
 
   factory ApiEntityDeclaration.fromJson(Map<String, dynamic> json) => ApiEntityDeclaration(
     id: json["id"],

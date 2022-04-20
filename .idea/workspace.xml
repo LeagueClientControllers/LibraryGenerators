@@ -2,24 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8827b501-acb9-4f9f-a1ca-71016aa1d11f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_category.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_documentation_node.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_entity.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_entity_declaration.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_entity_property.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_enum.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_enum_member.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_method.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_model.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_property_type.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_scheme.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/utilities/json_utilities.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/utilities/library_generator_exception.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/LibraryGenerators.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LibraryGenerators.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/core/generator.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DartLibraryGenerator/utilities/console_utils.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/bin/dart_library_generator.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/bin/dart_library_generator.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_category.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_category.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_documentation_node.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_documentation_node.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_entity.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_entity.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_entity_declaration.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_entity_declaration.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_entity_property.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_entity_property.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_enum.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_enum.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_enum_member.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_enum_member.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_method.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_method.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_property_type.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_property_type.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/sheme_model/api_scheme.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/scheme_model/api_scheme.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DartLibraryGenerator/utilities/library_generator_exception.dart" beforeDir="false" afterPath="$PROJECT_DIR$/DartLibraryGenerator/utilities/library_generator_exception.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,6 +71,9 @@
       <workItem from="1649776670911" duration="903000" />
       <workItem from="1649784842342" duration="1769000" />
       <workItem from="1649796992971" duration="4043000" />
+      <workItem from="1649938223222" duration="17000" />
+      <workItem from="1650186249294" duration="14000" />
+      <workItem from="1650231112381" duration="1689000" />
     </task>
     <servers />
   </component>

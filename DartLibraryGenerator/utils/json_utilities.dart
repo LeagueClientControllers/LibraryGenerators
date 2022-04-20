@@ -7,9 +7,10 @@ class JsonUtilities {
       throw SchemeParsingException("Error when parsing ${TEnum.runtimeType} enum. Json value for the enum should be a string.");
     }
 
-    final TEnum? value = values.where((element) => element.toString() == "${TEnum.runtimeType}.${jsonValue.toString()}").firstOrNull;
+    String enumType = TEnum.toString().replaceAll('?', ''); 
+    final TEnum? value = values.where((element) => element.toString() == "$enumType.${jsonValue.toString()}").firstOrNull;
     if (value == null) {
-      throw SchemeParsingException("Error when parsing ${TEnum.runtimeType} enum. Member '${jsonValue.toString()}' doesn't exists in the enum");
+      throw SchemeParsingException("Error when parsing $enumType enum. Member '${jsonValue.toString()}' doesn't exists in the enum");
     }
 
     return value;
@@ -24,7 +25,7 @@ class JsonUtilities {
       return null;
     }
 
-    return enumValue.toString().substring(TEnum.runtimeType.toString().length + 1);
+    return enumValue.toString().substring(TEnum.toString().replaceAll('?', '').length + 1);
   }
 }
 

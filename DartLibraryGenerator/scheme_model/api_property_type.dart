@@ -1,17 +1,17 @@
-import '../utilities/json_utilities.dart';
+import '../utils/json_utilities.dart';
 
 class ApiPropertyType {
   ApiPropertyType({
-    this.primitive,
+    this.primitive,final 
     this.referenceId,
     required this.nullable,
     required this.genericTypeArguments,
   });
 
-  PrimitiveType? primitive;
-  int? referenceId;
-  bool nullable;
-  List<ApiPropertyType> genericTypeArguments;
+  final PrimitiveType? primitive;
+  final int? referenceId;
+  final bool nullable;
+  final List<ApiPropertyType> genericTypeArguments;
 
   factory ApiPropertyType.fromJson(Map<String, dynamic> json) => ApiPropertyType(
     primitive: JsonUtilities.jsonToEnumN(json["primitive"], PrimitiveType.values),

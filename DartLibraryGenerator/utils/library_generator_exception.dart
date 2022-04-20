@@ -5,6 +5,6 @@ class LibraryGeneratorException implements Exception {
 
   @override
   String toString() {
-    return message ?? "";
+    return "Error while generating library. ${message ?? ""}";
   }
 }

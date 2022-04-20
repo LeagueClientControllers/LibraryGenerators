@@ -8,9 +8,9 @@ class ApiEntity {
     required this.docs,
   });
 
-  int id;
-  List<ApiEntityProperty> properties;
-  List<ApiDocumentationNode> docs;
+  final int id;
+  final List<ApiEntityProperty> properties;
+  final List<ApiDocumentationNode> docs;
 
   factory ApiEntity.fromJson(Map<String, dynamic> json) => ApiEntity(
     id: json["id"],

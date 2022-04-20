@@ -4,8 +4,8 @@ class ApiDocumentationNode {
     required this.isReference,
   });
 
-  String text;
-  bool isReference;
+  final String text;
+  final bool isReference;
 
   factory ApiDocumentationNode.fromJson(Map<String, dynamic> json) => ApiDocumentationNode(
     text: json["text"],

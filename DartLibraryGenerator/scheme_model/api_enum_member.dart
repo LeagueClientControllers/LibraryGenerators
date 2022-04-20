@@ -7,9 +7,9 @@ class ApiEnumMember {
     required this.docs,
   });
 
-  String name;
-  String value;
-  List<ApiDocumentationNode> docs;
+  final String name;
+  final String value;
+  final List<ApiDocumentationNode> docs;
 
   factory ApiEnumMember.fromJson(Map<String, dynamic> json) => ApiEnumMember(
     name: json["name"],

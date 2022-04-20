@@ -8,9 +8,9 @@ class ApiCategory {
     required this.methods,
   });
 
-  String name;
-  List<ApiDocumentationNode> docs;
-  List<ApiMethod> methods;
+  final String name;
+  final List<ApiDocumentationNode> docs;
+  final List<ApiMethod> methods;
 
   factory ApiCategory.fromJson(Map<String, dynamic> json) => ApiCategory(
     name: json["name"],

@@ -10,11 +10,11 @@ class ApiScheme {
     required this.model,
   });
 
-  String apiVersion;
-  String schemeVersion;
-  String generatedAt;
-  List<ApiCategory> categories;
-  ApiModel model;
+  final String apiVersion;
+  final String schemeVersion;
+  final String generatedAt;
+  final List<ApiCategory> categories;
+  final ApiModel model;
 
   factory ApiScheme.fromJson(Map<String, dynamic> json) => ApiScheme(
     apiVersion: json["apiVersion"],

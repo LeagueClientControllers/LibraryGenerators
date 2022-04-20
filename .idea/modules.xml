@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DartLibraryGenerator.iml" filepath="$PROJECT_DIR$/DartLibraryGenerator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/LibraryGenerators.iml" filepath="$PROJECT_DIR$/.idea/LibraryGenerators.iml" />
     </modules>
   </component>
 </project>

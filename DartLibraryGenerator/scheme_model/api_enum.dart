@@ -9,9 +9,9 @@ class ApiEnum {
     required this.members,
   });
 
-  int id;
-  List<ApiDocumentationNode> docs;
-  List<ApiEnumMember> members;
+  final int id;
+  final List<ApiDocumentationNode> docs;
+  final List<ApiEnumMember> members;
 
   factory ApiEnum.fromJson(Map<String, dynamic> json) => ApiEnum(
     id: json["id"],

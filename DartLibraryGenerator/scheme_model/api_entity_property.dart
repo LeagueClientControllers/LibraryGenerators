@@ -9,10 +9,10 @@ class ApiEntityProperty {
     required this.type,
   });
 
-  String name;
-  String jsonName;
-  List<ApiDocumentationNode> docs;
-  ApiPropertyType type;
+  final String name;
+  final String jsonName;
+  final List<ApiDocumentationNode> docs;
+  final ApiPropertyType type;
 
   factory ApiEntityProperty.fromJson(Map<String, dynamic> json) => ApiEntityProperty(
     name: json["name"],
