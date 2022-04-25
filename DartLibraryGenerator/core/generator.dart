@@ -27,6 +27,6 @@ FutureOr generateLibrary(ApiScheme scheme) async {
   LocalModel model = await generateModel(
       r"D:\Development\GitHub\LeagueClientControllers\lcc_api_dart", scheme.model, modelDeclarations);
   
-  // await generateCategories(
-  //     r"D:\Development\GitHub\LeagueClientControllers\LccApiDartTest", scheme.categories, model);
+  await generateCategories(
+      r"D:\Development\GitHub\LeagueClientControllers\lcc_api_dart", scheme.categories, model);
 }

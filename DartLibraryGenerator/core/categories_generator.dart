@@ -5,6 +5,7 @@ import 'package:path/path.dart' as path;
 import 'package:code_builder/code_builder.dart';
 import 'package:recase/recase.dart';
 
+import '../model/local_category.dart';
 import '../model/local_entity_property.dart';
 import '../model/local_model.dart';
 import '../model/local_model_entity.dart';
@@ -12,6 +13,7 @@ import '../scheme_model/api_category.dart';
 import '../scheme_model/api_method.dart';
 import '../utils/console_utilities.dart';
 import '../utils/generation_utilities.dart';
+import 'categories_merger.dart';
 import 'config.dart';
 import 'generator.dart';
 
@@ -27,15 +29,21 @@ FutureOr generateCategories(String libraryPath, List<ApiCategory> categories, Lo
     ConsoleUtilities.info("$categoryName:");
     Library categoryAbstraction = await _generateCategoryAbstraction(categoryName, category, model);
     ConsoleUtilities.info("|--Abstraction code graph is generated");
+    
+    Library categoryImplementation = await _generateCategoryImplementation(categoryName, category, categoryAbstraction, model);
+    ConsoleUtilities.info("|--Implementation code graph is generated");
+
+    if (await mergeCategory(libraryPath, new LocalCategory(categoryName, categoryAbstraction, categoryImplementation), category)) {
+      continue;
+    }
+
+    ConsoleUtilities.info("|--Old abstraction and implementation was not found");
 
     String abstractionContents = "${categoryAbstraction.accept(codeEmitter)}".insertGeneratedFileHeader();
     ConsoleUtilities.info("|--Abstraction file content is generated"); 
 
-    Library categoryImplementation = await _generateCategoryImplementation(categoryName, category, categoryAbstraction, model);
-    ConsoleUtilities.info("|--Implementation code graph is generated");
-
     String implementationContents = "${categoryImplementation.accept(codeEmitter)}".insertGeneratedFileHeader();
-    ConsoleUtilities.info("|--Implementation file content is generated"); 
+    ConsoleUtilities.info("|--Implementation file content is generated");
 
     File abstractionFile = File(path.join(libraryPath, LIBRARY_FOLDER, LIBRARY_SOURCE_FOLDER_NAME, CATEGORIES_FOLDER_NAME, CATEGORIES_ABSTRACTION_FOLDER_NAME, "i_${categoryName.snakeCase}.dart"));
     if (!abstractionFile.existsSync()) {
@@ -49,6 +57,8 @@ FutureOr generateCategories(String libraryPath, List<ApiCategory> categories, Lo
 
     abstractionFile.writeAsStringSync(codeFormatter.format(abstractionContents));  
     implementationFile.writeAsStringSync(codeFormatter.format(implementationContents));  
+
+    ConsoleUtilities.info("|--Abstraction and implementation are written");
   }
 
   ConsoleUtilities.info("Exports file:");
@@ -76,81 +86,83 @@ FutureOr<Library> _generateExportsFile(List<String> categoryNames) {
 }
 
 FutureOr<Library> _generateCategoryAbstraction(String categoryName, ApiCategory category, LocalModel model) async {
-  return new Library((library) => library.body.add(
-    new Class((categoryClass) {
-      categoryClass.name = "I$categoryName";
-      categoryClass.abstract = true;
+  return new Library((library) => library
+    ..addCategoryAbstractionImports()
+    ..body.add(
+      new Class((categoryClass) {
+        categoryClass.name = "I$categoryName";
+        categoryClass.abstract = true;
 
-      for (ApiMethod method in category.methods) {
-        categoryClass.methods.add(new Method((categoryMethod) {
-          categoryMethod.name = method.name;
-          categoryMethod.docs.addAll(method.docs.toDartDocs());
+        for (ApiMethod method in category.methods) {
+          categoryClass.methods.add(new Method((categoryMethod) {
+            categoryMethod.name = method.name;
+            categoryMethod.docs.addAll(method.docs.toDartDocs());
 
-          if (method.accessibleFrom == MethodAccessPolicy.Controller) {
-            categoryMethod.annotations.add(InvokeExpression.newOf(refer("ControllerOnly", "package:dart_library_generator/annotations.dart"), []));
-          } else if (method.accessibleFrom == MethodAccessPolicy.Device) {
-            categoryMethod.annotations.add(InvokeExpression.newOf(refer("DeviceOnly", "package:dart_library_generator/annotations.dart"), []));
-          }
-
-          LocalModelEntity returnType = model[method.responseId];
-          if (returnType.declaration.name == API_RESPONSE_MODEL_NAME) {
-            categoryMethod.returns = refer("Future", "dart:async");
-          } else {
-            if (returnType.properties.length == 1) {
-              categoryMethod.returns = new TypeReference((methodReturnType) {
-                methodReturnType.symbol = "Future";
-                methodReturnType.url = "dart:async";
-                methodReturnType.types.add(returnType.properties[0].type);
-              });
-            } else {
-              categoryMethod.returns = new TypeReference((methodReturnType) {
-                methodReturnType.symbol = "Future";
-                methodReturnType.url = "dart:async";
-                methodReturnType.types.add(new TypeReference((innerType) {
-                  innerType.symbol = returnType.declaration.name;
-                  innerType.url = MODEL_EXPORTS_URL;
-                }));
-              });
+            if (method.accessibleFrom == MethodAccessPolicy.Controller) {
+              categoryMethod.annotations.add(InvokeExpression.newOf(refer("ControllerOnly"), []));
+            } else if (method.accessibleFrom == MethodAccessPolicy.Device) {
+              categoryMethod.annotations.add(InvokeExpression.newOf(refer("DeviceOnly"), []));
             }
-          }
 
-          if (method.parametersId == null) {
-            return;
-          }
-
-          categoryMethod.docs.add("///");
-          for (LocalEntityProperty property in model[method.parametersId!].properties) {
-            Iterable<String> propertyDocs = property.initialProperty.docs.toDartDocs().map((e) => e.replaceAll(".", ";").replaceFirst("///", ""));
-            if (propertyDocs.length == 1) {
-              categoryMethod.docs.add("/// [${property.initialProperty.name}] -${propertyDocs.first}");
+            LocalModelEntity returnType = model[method.responseId];
+            if (returnType.declaration.name == API_RESPONSE_MODEL_NAME) {
+              categoryMethod.returns = refer("Future");
             } else {
-              categoryMethod.docs.add("/// [${property.initialProperty.name}] -");
-              for (String line in propertyDocs) {
-                categoryMethod.docs.add("///\t$line");
+              if (returnType.properties.length == 1) {
+                categoryMethod.returns = new TypeReference((methodReturnType) {
+                  methodReturnType.symbol = "Future";
+                  methodReturnType.types.add(returnType.properties[0].type);
+                });
+              } else {
+                categoryMethod.returns = new TypeReference((methodReturnType) {
+                  methodReturnType.symbol = "Future";
+                  methodReturnType.url = "dart:async";
+                  methodReturnType.types.add(new TypeReference((innerType) {
+                    innerType.symbol = returnType.declaration.name;
+                  }));
+                });
               }
-              categoryMethod.docs.add("///");
             }
 
-            categoryMethod.requiredParameters.add(new Parameter((methodParameter) {
-              methodParameter.name = property.initialProperty.name;
-              methodParameter.type = property.type;
-            }));
-          }
-        }));
-      }
-    })
-  ));
+            if (method.parametersId == null) {
+              return;
+            }
+
+            categoryMethod.docs.add("///");
+            for (LocalEntityProperty property in model[method.parametersId!].properties) {
+              Iterable<String> propertyDocs = property.initialProperty.docs.toDartDocs().map((e) => e.replaceAll(".", ";").replaceFirst("///", ""));
+              if (propertyDocs.length == 1) {
+                categoryMethod.docs.add("/// [${property.initialProperty.name}] -${propertyDocs.first}");
+              } else {
+                categoryMethod.docs.add("/// [${property.initialProperty.name}] -");
+                for (String line in propertyDocs) {
+                  categoryMethod.docs.add("///\t$line");
+                }
+                categoryMethod.docs.add("///");
+              }
+
+              categoryMethod.requiredParameters.add(new Parameter((methodParameter) {
+                methodParameter.name = property.initialProperty.name;
+                methodParameter.type = property.type;
+              }));
+            }
+          }));
+        }
+      })
+    )
+  );
 }
 
 FutureOr<Library> _generateCategoryImplementation(String categoryName, ApiCategory category, Library abstraction, LocalModel model) {
-  return new Library((library) {
-    library.body.add(new Class((categoryClass) {
+  return new Library((library) => library
+    ..addCategoryImplementationImports()
+    ..body.add(new Class((categoryClass) {
       categoryClass.name = categoryName;
-      categoryClass.implements.add(refer("I$categoryName", "package:$LIBRARY_PACKAGE_NAME/$CATEGORIES_FOLDER_NAME.dart"));
+      categoryClass.implements.add(refer("I$categoryName"));
       categoryClass.fields.add(new Field((coreInstance) {
         coreInstance.name = "_api";
         coreInstance.modifier = FieldModifier.final$;
-        coreInstance.type = refer("I$LIBRARY_CORE_CLASS", "package:$LIBRARY_PACKAGE_NAME/$CORE_LIBRARY_FILE_NAME.dart");
+        coreInstance.type = refer("I$LIBRARY_CORE_CLASS");
       }));
 
       categoryClass.constructors.add(new Constructor((constructor) {
@@ -177,18 +189,18 @@ FutureOr<Library> _generateCategoryImplementation(String categoryName, ApiCatego
           categoryMethod.body = new Block((methodBody) {
             if (method.parametersId != null) {
               methodBody.statements.add(_generateParametersInitCode(model[method.parametersId!]));
-              methodBody.statements.add(new Code("\t\t/* <auto-generated-safe-area> Code within tag borders shouldn't cause incorrect behavior and will be preserved. */"));
-              methodBody.statements.add(new Code("\t\t/* \tTODO: Add parameters validation */"));
-              methodBody.statements.add(new Code("\t\t/* </auto-generated-safe-area> */"));
+              methodBody.statements.add(new Code("    /* <auto-generated-safe-area> Code within tag borders shouldn't cause incorrect behavior and will be preserved. */"));
+              methodBody.statements.add(new Code("    /* \tTODO: Add parameters validation */"));
+              methodBody.statements.add(new Code("    /* </auto-generated-safe-area> */"));
             }
             
             LocalModelEntity responseEntity = model[method.responseId];
             methodBody.statements.add(_generateApiMethodInvocationCode("${category.name}/${method.name}", method, responseEntity));
 
             if (responseEntity.declaration.name != API_RESPONSE_MODEL_NAME) {
-              methodBody.statements.add(new Code("\t\t/* <auto-generated-safe-area> Code within tag borders shouldn't cause incorrect behavior and will be preserved. */"));
-              methodBody.statements.add(new Code("\t\t/* \tTODO: Add response validation */"));
-              methodBody.statements.add(new Code("\t\t/* </auto-generated-safe-area> */"));
+              methodBody.statements.add(new Code("    /* <auto-generated-safe-area> Code within tag borders shouldn't cause incorrect behavior and will be preserved. */"));
+              methodBody.statements.add(new Code("    /* \tTODO: Add response validation */"));
+              methodBody.statements.add(new Code("    /* </auto-generated-safe-area> */"));
               
               if (responseEntity.properties.length > 1) {
                 methodBody.statements.add(refer("response").returned.code);
@@ -205,13 +217,13 @@ FutureOr<Library> _generateCategoryImplementation(String categoryName, ApiCatego
           });
         }));
       } 
-    }));
-  });
+    }))
+  );
 }
 
 Code _generateParametersInitCode(LocalModelEntity parameters) {
-  Reference paramRef = refer(parameters.declaration.name, MODEL_EXPORTS_URL);
-  return refer(parameters.declaration.name, MODEL_EXPORTS_URL)
+  Reference paramRef = refer(parameters.declaration.name);
+  return refer(parameters.declaration.name)
       .newInstance(parameters.properties.map((p) => refer(p.initialProperty.name)))
       .assignFinal("parameters", paramRef)
       .statement;
@@ -250,7 +262,7 @@ Code _generateApiMethodInvocationCode(String methodPath, ApiMethod method, Local
       }));
 
       responseFactory.body = InvokeExpression.newOf(
-        refer(response.declaration.name, MODEL_EXPORTS_URL), 
+        refer(response.declaration.name), 
         [refer("json")], 
         {}, 
         [], 
@@ -270,7 +282,7 @@ Code _generateApiMethodInvocationCode(String methodPath, ApiMethod method, Local
 
   if (responseIncluded) {
     return methodCall
-        .assignFinal("response", refer(response.declaration.name, MODEL_EXPORTS_URL))
+        .assignFinal("response", refer(response.declaration.name))
         .statement;
   }
 

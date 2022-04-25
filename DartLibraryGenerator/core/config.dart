@@ -19,3 +19,8 @@ const String JSON_SERIALIZABLE_ANNOTATION_NAME = "JsonSerializable";
 
 const String SERIALIZABLE_CLASS_URL = "package:$LIBRARY_PACKAGE_NAME/src/utils/base_json_serializable.dart";
 const String SERIALIZABLE_CLASS_NAME = "BaseJsonSerializable";
+
+
+const CORE_EXPORTS_URL = "package:$LIBRARY_PACKAGE_NAME/$CORE_LIBRARY_FILE_NAME.dart";
+const MODEL_EXPORTS_URL = "package:$LIBRARY_PACKAGE_NAME/$MODEL_FOLDER_NAME.dart";
+const CATEGORIES_EXPORTS_URL = "package:$LIBRARY_PACKAGE_NAME/$CATEGORIES_FOLDER_NAME.dart";

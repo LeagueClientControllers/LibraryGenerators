@@ -6,7 +6,6 @@ import '../scheme_model/api_documentation_node.dart';
 import '../scheme_model/api_property_type.dart';
 import 'library_generator_exception.dart';
 
-const MODEL_EXPORTS_URL = "package:$LIBRARY_PACKAGE_NAME/$MODEL_FOLDER_NAME.dart";
 
 extension ApiTypeExtension on ApiPropertyType {
   void fillBuilder(TypeReferenceBuilder referenceBuilder, List<LocalEntityDeclaration> modelDeclarations) {
@@ -90,6 +89,25 @@ extension ImportExtension on LibraryBuilder {
         ..add(Directive.import(JSON_ANNOTATIONS_URL))
         ..add(Directive.import(SERIALIZABLE_CLASS_URL))
         ..add(Directive.import("package:decimal/decimal.dart"));
+  }
+
+  void addEnumImports() {
+    directives.add(Directive.import(JSON_ANNOTATIONS_URL));
+  }
+
+  void addCategoryAbstractionImports() {
+    directives
+        ..add(Directive.import("dart:async"))
+        ..add(Directive.import("package:dart_library_generator/annotations.dart"))
+        ..add(Directive.import(MODEL_EXPORTS_URL));
+  }
+
+  void addCategoryImplementationImports() {
+    directives
+        ..add(Directive.import("dart:async"))
+        ..add(Directive.import(CORE_EXPORTS_URL))
+        ..add(Directive.import(MODEL_EXPORTS_URL))
+        ..add(Directive.import(CATEGORIES_EXPORTS_URL));
   }
 } 
 

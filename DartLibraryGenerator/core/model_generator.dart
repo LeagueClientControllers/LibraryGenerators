@@ -92,9 +92,10 @@ FutureOr<LocalModel> generateModel(String libraryPath, ApiModel model, List<Loca
 }
 
 Library _generateExportsFile(List<LocalEntityDeclaration> modelDeclarations) {
-  return Library((library) => library.directives.addAll(
-    modelDeclarations.map((d) =>  Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, MODEL_FOLDER_NAME, d.localPath).replaceAll(r'\', r'\\')))
-  ));
+  return Library((library) => library.directives
+    ..addAll(
+      modelDeclarations.map((d) =>  Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, MODEL_FOLDER_NAME, d.localPath).replaceAll(r'\', r'\\')))
+    ));
 }
 
 LocalModelEntity _generateEntity(ApiEntity entity, List<LocalEntityDeclaration> modelDeclarations) {
@@ -193,6 +194,7 @@ Library _generateEnum(ApiEnum enumEntity, List<LocalEntityDeclaration> modelDecl
   LocalEntityDeclaration declaration = modelDeclarations[enumEntity.id - 1];
 
   return new Library((library) {
+    library.addEnumImports();
     library.body.add(
       new Enum((entityEnum) {
         entityEnum.name = declaration.name;
