@@ -19,6 +19,7 @@ linter:
   rules:
     constant_identifier_names: false
     unnecessary_new: false
+    prefer_adjacent_string_concatenation: false
 
 # analyzer:
 #   exclude:

@@ -6,6 +6,8 @@ import '../scheme_model/api_documentation_node.dart';
 import '../scheme_model/api_property_type.dart';
 import 'library_generator_exception.dart';
 
+const MODEL_EXPORTS_URL = "package:$LIBRARY_PACKAGE_NAME/$MODEL_FOLDER_NAME.dart";
+
 extension ApiTypeExtension on ApiPropertyType {
   void fillBuilder(TypeReferenceBuilder referenceBuilder, List<LocalEntityDeclaration> modelDeclarations) {
     if (primitive != null) {
@@ -49,7 +51,6 @@ extension ApiTypeExtension on ApiPropertyType {
     } else if (referenceId != null) {
       LocalEntityDeclaration declaration = modelDeclarations[referenceId! - 1];
       referenceBuilder.symbol = declaration.name;
-      referenceBuilder.url = "package:$LIBRARY_PACKAGE_NAME/$LIBRARY_SOURCE_FOLDER_NAME/$MODEL_FOLDER_NAME/$MODEL_FOLDER_NAME.dart";
     } else {
       throw LibraryGeneratorException(message: "Property type should be defined by either a primitive type or a model reference.");
     }
@@ -81,6 +82,16 @@ extension ApiDocsExtension on List<ApiDocumentationNode> {
     return result;
   }
 }
+
+extension ImportExtension on LibraryBuilder {
+  void addModelImports() {
+    directives
+        ..add(Directive.import(MODEL_EXPORTS_URL))
+        ..add(Directive.import(JSON_ANNOTATIONS_URL))
+        ..add(Directive.import(SERIALIZABLE_CLASS_URL))
+        ..add(Directive.import("package:decimal/decimal.dart"));
+  }
+} 
 
 extension GeneratedFileHeader on String {
   String insertGeneratedFileHeader() {
