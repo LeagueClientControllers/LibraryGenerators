@@ -94,7 +94,7 @@ FutureOr<LocalModel> generateModel(String libraryPath, ApiModel model, List<Loca
 Library _generateExportsFile(List<LocalEntityDeclaration> modelDeclarations) {
   return Library((library) => library.directives
     ..addAll(
-      modelDeclarations.map((d) =>  Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, MODEL_FOLDER_NAME, d.localPath).replaceAll(r'\', r'\\')))
+      modelDeclarations.map((d) =>  Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, MODEL_FOLDER_NAME, d.localPath).replaceAll(r'\', r'/')))
     ));
 }
 

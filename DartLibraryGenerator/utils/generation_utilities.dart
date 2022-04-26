@@ -105,9 +105,17 @@ extension ImportExtension on LibraryBuilder {
   void addCategoryImplementationImports() {
     directives
         ..add(Directive.import("dart:async"))
+        ..add(Directive.import("package:$LIBRARY_PACKAGE_NAME/exceptions.dart"))
         ..add(Directive.import(CORE_EXPORTS_URL))
         ..add(Directive.import(MODEL_EXPORTS_URL))
         ..add(Directive.import(CATEGORIES_EXPORTS_URL));
+  }
+
+  void addEventsHandlerImports() {
+    directives
+        ..add(Directive.import("dart:async"))
+        ..add(Directive.import("package:lcc_api_dart/src/model/local/event_message.dart"))
+        ..add(Directive.import(MODEL_EXPORTS_URL));
   }
 } 
 

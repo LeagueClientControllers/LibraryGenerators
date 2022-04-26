@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:analyzer/dart/analysis/features.dart';
-import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:path/path.dart' as path;
@@ -17,15 +16,6 @@ import '../utils/generation_utilities.dart';
 import '../utils/library_generator_exception.dart';
 import 'config.dart';
 import 'generator.dart';
-
-final _featureSet = FeatureSet.fromEnableFlags2(
-  sdkLanguageVersion: Version(2, 17, 0),
-  flags: [
-    'enhanced-enums',
-    'named-arguments-anywhere',
-    'super-parameters',
-  ],
-);
 
 FutureOr<bool> mergeCategory(String libraryPath, LocalCategory category, ApiCategory apiCategory) async {
   String abstractionsPath    = path.join(libraryPath, LIBRARY_FOLDER, LIBRARY_SOURCE_FOLDER_NAME, CATEGORIES_FOLDER_NAME, CATEGORIES_ABSTRACTION_FOLDER_NAME);
@@ -43,10 +33,10 @@ FutureOr<bool> mergeCategory(String libraryPath, LocalCategory category, ApiCate
   final String oldAbstractionContent = await oldAbstractionFile.readAsString();
   final String oldImplementationContent = await oldImplementationFile.readAsString();
 
-  final CompilationUnit oldAbstraction = parseString(content: oldAbstractionContent, featureSet: _featureSet).unit;
+  final CompilationUnit oldAbstraction = parseString(content: oldAbstractionContent, featureSet: langFeatureSet).unit;
   ConsoleUtilities.info("|--Old abstraction is parsed");
   
-  final CompilationUnit oldImplementation = parseString(content: oldImplementationContent, featureSet: _featureSet).unit;
+  final CompilationUnit oldImplementation = parseString(content: oldImplementationContent, featureSet: langFeatureSet).unit;
   ConsoleUtilities.info("|--Old implementation is parsed");
 
   final String generatedAbstraction = "${category.abstraction.accept(codeEmitter)}";
@@ -55,19 +45,19 @@ FutureOr<bool> mergeCategory(String libraryPath, LocalCategory category, ApiCate
   final String generatedImplementation = "${category.implementation.accept(codeEmitter)}";
   ConsoleUtilities.info("|--New implementation is generated");
 
-  final CompilationUnit newAbstraction = parseString(content: generatedAbstraction, featureSet: _featureSet).unit;
+  final CompilationUnit newAbstraction = parseString(content: generatedAbstraction, featureSet: langFeatureSet).unit;
   ConsoleUtilities.info("|--New abstraction is parsed");
   
-  final CompilationUnit newImplementation = parseString(content: generatedImplementation, featureSet: _featureSet).unit;
+  final CompilationUnit newImplementation = parseString(content: generatedImplementation, featureSet: langFeatureSet).unit;
   ConsoleUtilities.info("|--New implementation is parsed");
 
   ConsoleUtilities.info("|--Parsing abstraction methods...");
-  List<SyntacticMethod> abstractionMethods = findMethods("I${category.name}", oldAbstraction, newAbstraction, apiCategory.methods);
-  List<ApiMethod> changedMethods = checkAbstractionMethods(oldAbstractionContent, generatedAbstraction, oldAbstraction, newAbstraction, abstractionMethods);
+  List<SyntacticMethod> abstractionMethods = _findMethods("I${category.name}", oldAbstraction, newAbstraction, apiCategory.methods);
+  List<ApiMethod> changedMethods = _checkAbstractionMethods(oldAbstractionContent, generatedAbstraction, oldAbstraction, newAbstraction, abstractionMethods);
 
   ConsoleUtilities.info("|--Parsing implementation methods...");
-  List<SyntacticMethod> implementationMethods = findMethods(category.name, oldImplementation, newImplementation, apiCategory.methods);
-  String mergedImplementation = mergeImplementationMethods(oldImplementationContent, generatedImplementation, oldImplementation, newImplementation, implementationMethods, changedMethods);
+  List<SyntacticMethod> implementationMethods = _findMethods(category.name, oldImplementation, newImplementation, apiCategory.methods);
+  String mergedImplementation = _mergeImplementationMethods(oldImplementationContent, generatedImplementation, oldImplementation, newImplementation, implementationMethods, changedMethods);
 
   await oldAbstractionFile.writeAsString(codeFormatter.format(generatedAbstraction.insertGeneratedFileHeader()));
   ConsoleUtilities.info("|--New abstraction is written");
@@ -78,7 +68,7 @@ FutureOr<bool> mergeCategory(String libraryPath, LocalCategory category, ApiCate
   return true;
 }
 
-List<SyntacticMethod> findMethods(String className, CompilationUnit oldUnit, CompilationUnit newUnit, List<ApiMethod> methods) {
+List<SyntacticMethod> _findMethods(String className, CompilationUnit oldUnit, CompilationUnit newUnit, List<ApiMethod> methods) {
   List<MethodDeclaration> oldAbstractionMethods = extractMethods(oldUnit, className); 
   List<MethodDeclaration> newAbstractionMethods = extractMethods(newUnit, className); 
 
@@ -115,7 +105,7 @@ List<SyntacticMethod> findMethods(String className, CompilationUnit oldUnit, Com
   return result;
 }
 
-List<ApiMethod> checkAbstractionMethods(String oldAbstractionContent, String newAbstractionContent, CompilationUnit oldAbstraction, CompilationUnit newAbstraction, List<SyntacticMethod> methods) {
+List<ApiMethod> _checkAbstractionMethods(String oldAbstractionContent, String newAbstractionContent, CompilationUnit oldAbstraction, CompilationUnit newAbstraction, List<SyntacticMethod> methods) {
   List<ApiMethod> changedMethods = [];
   for (SyntacticMethod method in methods) {
     String oldMethodSyntax = oldAbstractionContent.substring(method.oldMethod.firstTokenAfterCommentAndMetadata.offset, method.oldMethod.end);
@@ -133,7 +123,7 @@ List<ApiMethod> checkAbstractionMethods(String oldAbstractionContent, String new
   return changedMethods;
 }
 
-String mergeImplementationMethods(String oldImplementationContent, String newImplementationContent, CompilationUnit oldImplementation, CompilationUnit newImplementation, List<SyntacticMethod> methods, List<ApiMethod> changedMethods) {
+String _mergeImplementationMethods(String oldImplementationContent, String newImplementationContent, CompilationUnit oldImplementation, CompilationUnit newImplementation, List<SyntacticMethod> methods, List<ApiMethod> changedMethods) {
   int offset = 0;
   String mergedImplementationContent = newImplementationContent;
   for (SyntacticMethod method in methods) {

@@ -23,7 +23,7 @@ FutureOr generateCategories(String libraryPath, List<ApiCategory> categories, Lo
   
   List<String> categoryNames = [];
   for (ApiCategory category in categories) {
-    String categoryName = "${category.name.pascalCase}Category";
+    String categoryName = "${category.name.pascalCase}$CATEGORY_IDENTIFIER";
     categoryNames.add(categoryName);
 
     ConsoleUtilities.info("$categoryName:");
@@ -79,8 +79,8 @@ FutureOr generateCategories(String libraryPath, List<ApiCategory> categories, Lo
 FutureOr<Library> _generateExportsFile(List<String> categoryNames) {
   return Library((library) {
     for (String categoryName in categoryNames) {
-      library.directives.add(Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, CATEGORIES_FOLDER_NAME, "${categoryName.snakeCase}.dart").replaceAll(r'\', r'\\')));
-      library.directives.add(Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, CATEGORIES_FOLDER_NAME, CATEGORIES_ABSTRACTION_FOLDER_NAME, "i_${categoryName.snakeCase}.dart").replaceAll(r'\', r'\\')));
+      library.directives.add(Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, CATEGORIES_FOLDER_NAME, "${categoryName.snakeCase}.dart").replaceAll(r'\', r'/')));
+      library.directives.add(Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, CATEGORIES_FOLDER_NAME, CATEGORIES_ABSTRACTION_FOLDER_NAME, "i_${categoryName.snakeCase}.dart").replaceAll(r'\', r'/')));
     }
   });
 }

@@ -2,11 +2,14 @@ const String SUPPORTED_SCHEME_VERSION = "1.0.0";
 
 const String LIBRARY_PACKAGE_NAME = "lcc_api_dart"; 
 const String API_RESPONSE_MODEL_NAME = "ApiResponse";
+const String EVENTS_HANDLER_NAME = "EventsHandler";
+const String CATEGORY_IDENTIFIER = "Category";
 const String LIBRARY_CORE_CLASS = "LccApi";
 
 const String LIBRARY_FOLDER = "lib";
 const String LIBRARY_SOURCE_FOLDER_NAME = "src";
 const String MODEL_FOLDER_NAME = "model";
+const String SERVICES_FOLDER_NAME = "services";
 const String CATEGORIES_FOLDER_NAME = "categories";
 const String CATEGORIES_ABSTRACTION_FOLDER_NAME = "abstraction";
 const String CORE_LIBRARY_FILE_NAME = "core";
