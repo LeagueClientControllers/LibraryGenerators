@@ -1,0 +1,5 @@
+D:\Development\GitHub\LeagueClientControllers\LibraryGenerators\NetLibraryGenerator\NetLibraryGenerator\obj\Debug\net6.0\NetLibraryGenerator.csproj.AssemblyReference.cache
+D:\Development\GitHub\LeagueClientControllers\LibraryGenerators\NetLibraryGenerator\NetLibraryGenerator\obj\Debug\net6.0\NetLibraryGenerator.GeneratedMSBuildEditorConfig.editorconfig
+D:\Development\GitHub\LeagueClientControllers\LibraryGenerators\NetLibraryGenerator\NetLibraryGenerator\obj\Debug\net6.0\NetLibraryGenerator.AssemblyInfoInputs.cache
+D:\Development\GitHub\LeagueClientControllers\LibraryGenerators\NetLibraryGenerator\NetLibraryGenerator\obj\Debug\net6.0\NetLibraryGenerator.AssemblyInfo.cs
+D:\Development\GitHub\LeagueClientControllers\LibraryGenerators\NetLibraryGenerator\NetLibraryGenerator\obj\Debug\net6.0\NetLibraryGenerator.csproj.CoreCompileInputs.cache
