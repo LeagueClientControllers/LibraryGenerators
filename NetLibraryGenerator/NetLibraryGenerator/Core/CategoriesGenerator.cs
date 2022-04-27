@@ -55,7 +55,7 @@ namespace NetLibraryGenerator.Core
                 CodeCompileUnit implementation = BuildImplementationGraph(abstraction, category, categoryName, model, apiResponse.Id);
                 ConsoleUtils.ShowInfo($"|--Implementation graph is built");
 
-                LocalCategory localCategory = new LocalCategory(categoryName, abstraction, implementation);
+                LocalCategory localCategory = new LocalCategory(categoryName, abstraction, implementation, category);
                 localCategories.Add(localCategory);
             }
 

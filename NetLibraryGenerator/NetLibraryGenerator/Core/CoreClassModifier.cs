@@ -1,8 +1,10 @@
-﻿using NetLibraryGenerator.Model;
-using NetLibraryGenerator.Utilities;
+﻿using System.CodeDom;
+using System.CodeDom.Compiler;
 
-using System.CodeDom;
 using ICSharpCode.NRefactory.CSharp;
+
+using NetLibraryGenerator.Model;
+using NetLibraryGenerator.Utilities;
 
 namespace NetLibraryGenerator.Core
 {
@@ -20,135 +22,166 @@ namespace NetLibraryGenerator.Core
             string coreAbstractionPath = Path.Combine(libraryPath, $"{Config.CORE_LIBRARY_ABSTRACTION_TYPE}.cs");
             string coreImplementationPath = Path.Combine(libraryPath, $"{Config.CORE_LIBRARY_IMPLEMENTATION_TYPE}.cs");
             
-            SyntaxTree coreAbstraction = null!;
-            string? coreAbstractionContent = null!;
+            ConsoleUtils.ShowInfo("Abstraction:");
+            
+            SyntaxTree coreAbstraction;
+            string? coreAbstractionContent;
             using (StreamReader reader = new StreamReader(new FileStream(coreAbstractionPath, FileMode.Open, FileAccess.Read))) {
                 coreAbstractionContent = reader.ReadToEnd();
                 coreAbstraction = Generator.CodeParser.Parse(coreAbstractionContent);
             }
-
-            SyntaxTree coreImplementation = null!;
-            string? coreImplementationContent = null!;
+            
+            ConsoleUtils.ShowInfo("Core abstraction is parsed");
+            string modifiedCoreAbstraction = ModifyAbstraction(coreAbstractionContent, coreAbstraction, categories);
+            using (StreamWriter writer = new StreamWriter(new FileStream(coreAbstractionPath, FileMode.Create, FileAccess.Write))) {
+                writer.Write(modifiedCoreAbstraction);
+            }
+            
+            ConsoleUtils.ShowInfo("|—-Abstraction is updated.");
+            
+            ConsoleUtils.ShowInfo("Implementation:");
+            SyntaxTree coreImplementation;
+            string? coreImplementationContent;
             using (StreamReader reader = new StreamReader(new FileStream(coreImplementationPath, FileMode.Open, FileAccess.Read))) {
                 coreImplementationContent = reader.ReadToEnd();
                 coreImplementation = Generator.CodeParser.Parse(coreImplementationContent);
             }
-
-            ConsoleUtils.ShowInfo("Core abstraction and implementation are parsed");
-
-            ConsoleUtils.ShowInfo("Abstraction:");
-            string modifiedCoreAbstraction = ModifyAbstraction(coreAbstractionContent, coreAbstraction, categories);
             
-            using (StreamWriter writer = new StreamWriter(new FileStream(coreAbstractionPath, FileMode.Create, FileAccess.Write))) {
-                writer.Write(modifiedCoreAbstraction);
-            }
-            ConsoleUtils.ShowInfo($"|—-Abstraction is updated.");
-            
-            ConsoleUtils.ShowInfo("Implementation:");
+            ConsoleUtils.ShowInfo("Core implementation is parsed");
             string modifiedCoreImplementation = ModifyImplementation(coreImplementationContent, coreImplementation, categories);
-
             using (StreamWriter writer = new StreamWriter(new FileStream(coreImplementationPath, FileMode.Create, FileAccess.Write))) {
                 writer.Write(modifiedCoreImplementation);
             }
-            ConsoleUtils.ShowInfo($"|—-Implementation is updated.");
+            
+            ConsoleUtils.ShowInfo("|—-Implementation is updated.");
         }
 
-        public static string ModifyAbstraction(string content, SyntaxTree syntax, List<LocalCategory> categories)
+        private static string ModifyAbstraction(string content, SyntaxTree abstraction, List<LocalCategory> categories)
         {
             List<string> tabularContent = content.Split("\r\n").ToList();
-            Range sectionRange = ExtractCategoriesSectionRange(syntax, Config.CORE_LIBRARY_ABSTRACTION_TYPE);
+            Region categoriesRegion = ExtractRegions(abstraction.ExtractType(Config.CORE_LIBRARY_ABSTRACTION_TYPE)).First();
+            tabularContent.RemoveRange(new Range(categoriesRegion.StartLineIndex + 1, categoriesRegion.EndLineIndex - 1));
             ConsoleUtils.ShowInfo("|--Categories section is found");
-            tabularContent.RemoveRange(sectionRange);
 
-            List<string> newCategoriesSection = new();
+            List<string> newCategoriesSection = new() { "" };
             foreach (LocalCategory category in categories) {
-                foreach (CodeCommentStatement comment in category.Abstraction.Namespaces[1].Types[0].Comments) {
-                    string[] commentLines = comment.Comment.Text.Split("\r\n").Select(s => $"///{s}").ToArray();
-                    commentLines[0] = commentLines[0].Replace("///", "/// ");
-                    newCategoriesSection.AddRange(commentLines);
-                }
-
-                newCategoriesSection.Add($"I{category.Name} {category.Name.Replace(Config.CATEGORY_IDENTIFIER, "")} {{ get; }}");
+                CodeMemberField categoryProperty = new CodeMemberField();
+                categoryProperty.Name = $"{category.InitialCategory.Name.CaseTransform(Case.CamelCase, Case.PascalCase)} {{ get; }}//";
+                categoryProperty.Type = new CodeTypeReference($"I{category.Name}");
+                categoryProperty.Attributes = MemberAttributes.Public;
+                categoryProperty.Comments.Add(category.InitialCategory.Docs.ToCSharpDoc());
+                
+                newCategoriesSection.Add(Generator.CodeProvider.GenerateCodeFromMember(categoryProperty, new CodeGeneratorOptions())
+                    .Replace("//;", "")
+                    .Trim()
+                    .Split("\r\n")
+                    .Select(s => string.IsNullOrEmpty(s) ? "" : $"        {s}")
+                    .JoinString("\r\n"));
                 newCategoriesSection.Add("");
             }
 
-            tabularContent.InsertRange(sectionRange.Start.Value, newCategoriesSection.Select(s => String.IsNullOrEmpty(s) ? s : $"        {s}"));
+            tabularContent.InsertRange(categoriesRegion.StartLineIndex + 1, newCategoriesSection);
             ConsoleUtils.ShowInfo("|--Categories section is updated with new categories");
 
-            return String.Join("\r\n", tabularContent);
+            return string.Join("\r\n", tabularContent);
         }
 
         private static string ModifyImplementation(string content, SyntaxTree syntax, List<LocalCategory> categories)
         {
             List<string> tabularContent = content.Split("\r\n").ToList();
-            Range sectionRange = ExtractCategoriesSectionRange(syntax, Config.CORE_LIBRARY_IMPLEMENTATION_TYPE);
-            ConsoleUtils.ShowInfo("|--Categories section is found");
-            tabularContent.RemoveRange(sectionRange);
+            List<Region> autoGeneratedRegions =
+                ExtractRegions(syntax.ExtractType(Config.CORE_LIBRARY_IMPLEMENTATION_TYPE))
+                    .Where(r => r.Name.StartsWith("<auto-generated>"))
+                    .ToList();
 
-            List<string> newCategoriesSection = new();
+            Region categoriesImplementationRegion = autoGeneratedRegions[0];
+            Region categoriesInitializationRegion = autoGeneratedRegions[1];
+            tabularContent.RemoveRange(new Range(categoriesImplementationRegion.StartLineIndex + 1, categoriesImplementationRegion.EndLineIndex - 1));
+
+            List<string> categoriesImplementationSection = new() { "" };
             foreach (LocalCategory category in categories) {
-                newCategoriesSection.Add($"/// <inheritdoc />");
-                newCategoriesSection.Add($"public I{category.Name} {category.Name.Replace(Config.CATEGORY_IDENTIFIER, "")} {{ get; }}");
-                newCategoriesSection.Add("");
+                CodeMemberField categoryProperty = new CodeMemberField();
+                categoryProperty.Name = $"{category.InitialCategory.Name.CaseTransform(Case.CamelCase, Case.PascalCase)} {{ get; }}//";
+                categoryProperty.Type = new CodeTypeReference($"I{category.Name}");
+                categoryProperty.Comments.Add(new CodeCommentStatement("<inheritdoc />", true));
+
+                // ReSharper disable once BitwiseOperatorOnEnumWithoutFlags
+                categoryProperty.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+                
+                categoriesImplementationSection.Add(Generator.CodeProvider.GenerateCodeFromMember(categoryProperty, new CodeGeneratorOptions())
+                    .Replace("//;", "")
+                    .Trim()
+                    .Split("\r\n")
+                    .Select(s => string.IsNullOrEmpty(s) ? "" : $"        {s}")
+                    .JoinString("\r\n"));
+                categoriesImplementationSection.Add("");
             }
 
-            tabularContent.InsertRange(sectionRange.Start.Value, newCategoriesSection.Select(s => String.IsNullOrEmpty(s) ? s : $"        {s}"));
+            tabularContent.InsertRange(categoriesImplementationRegion.StartLineIndex + 1, categoriesImplementationSection);
             ConsoleUtils.ShowInfo("|--Categories section is updated with new categories");
 
-            int contentOffset = newCategoriesSection.Count - sectionRange.GetLength();
-            ConstructorDeclaration constructor = syntax.ExtractTypeConstructors(Config.CORE_LIBRARY_IMPLEMENTATION_TYPE).First();
+            int contentOffset = categoriesImplementationSection.Count - 
+                (categoriesImplementationRegion.EndLineIndex - 1 - categoriesImplementationRegion.StartLineIndex);
 
-            int categoriesInitializationSectionEndIndex = 0;
-            int categoriesInitializationSectionStartIndex = constructor.Body.StartLocation.Line + contentOffset;
-            for (int i = categoriesInitializationSectionStartIndex; i < constructor.Body.EndLocation.Line + contentOffset - 1; ++i) {
-                if (!tabularContent[i].Contains(Config.CATEGORY_IDENTIFIER)) {
-                    categoriesInitializationSectionEndIndex = i - 1;
-                    break;
-                }
-            }
-
-            ConsoleUtils.ShowInfo("|--Initialization section is found");
-            tabularContent.RemoveRange(categoriesInitializationSectionStartIndex..categoriesInitializationSectionEndIndex);
+            tabularContent.RemoveRange(
+                (categoriesInitializationRegion.StartLineIndex + 1 + contentOffset)
+                ..(categoriesInitializationRegion.EndLineIndex - 1 + contentOffset));
 
             List<string> newInitializationSection = new();
             foreach (LocalCategory category in categories) {
-                newInitializationSection.Add($"{category.Name.Replace(Config.CATEGORY_IDENTIFIER, "")} = new {category.Name}(this);");
+                string categoryName = category.InitialCategory.Name.CaseTransform(Case.CamelCase, Case.PascalCase);
+                CodeStatement initialization = new CodeAssignStatement(
+                    new CodeArgumentReferenceExpression(categoryName),
+                    new CodeObjectCreateExpression(category.Name, new CodeThisReferenceExpression()));
+
+                newInitializationSection.Add(
+                    Generator.CodeProvider.GenerateCodeFromStatement(initialization, new CodeGeneratorOptions()).Trim());
             }
 
-            tabularContent.InsertRange(categoriesInitializationSectionStartIndex, newInitializationSection.Select(s => String.IsNullOrEmpty(s) ? s : $"            {s}"));
+            tabularContent.InsertRange(categoriesInitializationRegion.StartLineIndex + 1 + contentOffset, 
+                newInitializationSection.Select(s => string.IsNullOrEmpty(s) ? s : $"            {s}"));
+            
             ConsoleUtils.ShowInfo("|--Initialization section is updated with new categories");
             return string.Join("\r\n", tabularContent);
         }
 
-        private static Range ExtractCategoriesSectionRange(SyntaxTree syntax, string className)
-        {
-            int categoriesSectionEndLine = 0;
-            int categoriesSectionStartLine = 0;
-            bool categoriesSectionStarted = false;
-            List<PropertyDeclaration> properties = syntax.ExtractTypeProperties(className);
-            for (int i = 0; i < properties.Count; i++) {
-                PropertyDeclaration property = properties[i];
-                if (property.ReturnType.ToString().Contains(Config.CATEGORY_IDENTIFIER) && !categoriesSectionStarted) {
-                    categoriesSectionStarted = true;
-                    categoriesSectionStartLine = property.StartLocation.Line;
-                }
 
-                if (!categoriesSectionStarted) {
-                    continue;
-                }
-                
-                if (i < properties.Count - 1) {
-                    if (!properties[i + 1].ReturnType.ToString().Contains(Config.CATEGORY_IDENTIFIER)) {
-                        categoriesSectionEndLine = property.EndLocation.Line;
-                        break;
-                    }
-                } else {
-                    categoriesSectionEndLine = property.EndLocation.Line;
-                    break;
-                }
+        private static List<Region> ExtractRegions(TypeDeclaration type)
+        {
+            List<Region> regions = new List<Region>();
+            foreach (AstNode child in type.Children) {
+                SearchForRegionInNode(regions, child);
             }
 
-            return new Range(categoriesSectionStartLine - 1, categoriesSectionEndLine);
+            return regions;
+        }
+
+        private static void SearchForRegionInNode(List<Region> regions, AstNode node)
+        {
+             if (node is not PreProcessorDirective directive) {
+                node.Children.ToList().ForEach(c => SearchForRegionInNode(regions, c));
+                return;
+             }
+
+             switch (directive.Type) {
+                 case PreProcessorDirectiveType.Region: {
+                     regions.Add(new Region {
+                         StartLineIndex = directive.StartLocation.Line - 1,
+                         Name = directive.Argument
+                     });
+                     break;
+                 }
+
+                 case PreProcessorDirectiveType.Endregion: {
+                     Region lastIncomplete = regions.Last(r => !r.Complete);
+                     lastIncomplete.Complete = true;
+                     lastIncomplete.EndLineIndex = directive.StartLocation.Line - 1;
+                     break;
+                 }
+
+                 default:
+                     return;
+             }
         }
     }
 }

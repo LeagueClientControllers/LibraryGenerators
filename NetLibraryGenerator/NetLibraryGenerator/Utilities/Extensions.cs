@@ -1,5 +1,4 @@
 ﻿using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.TypeSystem;
 
 using NetLibraryGenerator.Core;
 using NetLibraryGenerator.Model;
@@ -12,6 +11,9 @@ namespace NetLibraryGenerator.Utilities
 {
     public static class Extensions
     {
+        public static string JoinString<T>(this IEnumerable<T> enumerable, string separator) =>
+            string.Join(separator, enumerable);
+        
         public static int GetLength(this Range range)
         {
             return range.End.Value - range.Start.Value + 1;
@@ -22,6 +24,34 @@ namespace NetLibraryGenerator.Utilities
             list.RemoveRange(offset, length + 1);
         }
 
+        public static string GenerateCodeFromMember(this CodeDomProvider provider, CodeTypeMember member, CodeGeneratorOptions options)
+        {
+            using (MemoryStream stream = new MemoryStream()) {
+                IndentedTextWriter writer = new IndentedTextWriter(new StreamWriter(stream), "    ");
+                provider.GenerateCodeFromMember(member, writer, options);
+                writer.Flush();
+                stream.Position = 0;
+
+                using (StreamReader reader = new StreamReader(stream)) {
+                    return reader.ReadToEnd();
+                }
+            }
+        }
+
+        public static string GenerateCodeFromStatement(this CodeDomProvider provider, CodeStatement statement, CodeGeneratorOptions options)
+        {
+            using (MemoryStream stream = new MemoryStream()) {
+                IndentedTextWriter writer = new IndentedTextWriter(new StreamWriter(stream), "    ");
+                provider.GenerateCodeFromStatement(statement, writer, options);
+                writer.Flush();
+                stream.Position = 0;
+
+                using (StreamReader reader = new StreamReader(stream)) {
+                    return reader.ReadToEnd();
+                }
+            }
+        }
+        
         public static CodeCommentStatement ToCSharpDoc(this IEnumerable<JsDocumentationNode> nodes)
         {
             string comment = "<summary>\r\n ";
@@ -107,6 +137,12 @@ namespace NetLibraryGenerator.Utilities
             return typeReference;
         }
 
+        public static TypeDeclaration ExtractType(this SyntaxTree entity, string typeName)
+        {
+            NamespaceDeclaration oldAbstractionNamespace = (NamespaceDeclaration)entity.Members.Last();
+            return (TypeDeclaration)oldAbstractionNamespace.Members.First(m => m is TypeDeclaration tD && tD.Name == typeName);
+        }
+        
         public static List<MethodDeclaration> ExtractTypeMethods(this SyntaxTree entity, string typeName)
         {
             NamespaceDeclaration oldAbstractionNamespace = (NamespaceDeclaration)entity.Members.Last();

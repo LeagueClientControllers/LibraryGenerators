@@ -8,14 +8,14 @@ using Newtonsoft.Json;
 
 namespace NetLibraryGenerator
 {
-    public class Program
+    public static class Program
     {
-        private const int SUPPORTED_SCHEME_VERSION = 1;
+        private const string SUPPORTED_SCHEME_VERSION = "1.0.0";
         private const ConsoleColor DEFAULT_COLOR = ConsoleColor.Green;
 
         private static ApiScheme? _scheme;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.ForegroundColor = DEFAULT_COLOR;
             ConsoleUtils.ShowInfo("Parsing scheme...");

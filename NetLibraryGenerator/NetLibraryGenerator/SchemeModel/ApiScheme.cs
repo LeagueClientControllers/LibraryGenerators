@@ -8,7 +8,7 @@ public class ApiScheme
     public string ApiVersion { get; set; } = null!;
 
     [JsonProperty("schemeVersion")]
-    public int SchemeVersion { get; set; } = default!;
+    public string SchemeVersion { get; set; } = default!;
     
     [JsonProperty("generatedAt")] 
     public string GeneratedAt { get; set; } = null!;

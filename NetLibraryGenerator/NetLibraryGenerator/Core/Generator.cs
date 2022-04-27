@@ -11,10 +11,10 @@ using System.CodeDom.Compiler;
 
 namespace NetLibraryGenerator.Core
 {
-    public class Generator
+    public static class Generator
     {
-        public static CSharpParser CodeParser = new CSharpParser();
-        public static CodeDomProvider CodeProvider = new CSharpCodeProvider(); 
+        public static readonly CSharpParser CodeParser = new CSharpParser();
+        public static readonly CodeDomProvider CodeProvider = new CSharpCodeProvider(); 
 
         public static void GenerateLibrary(ApiScheme scheme)
         {
