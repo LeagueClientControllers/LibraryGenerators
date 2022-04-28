@@ -15,11 +15,10 @@
                     splitted = input.Split('_');
                     break;
                 case Case.PascalCase:
-                    int indexer = 0;
-                    List<string> _splitted = new(1);
-                    _splitted.Add("");
+                    int indexer = -1;
+                    List<string> _splitted = new();
                     foreach (char c in input) {
-                        if (Char.IsUpper(c)) {
+                        if (char.IsUpper(c)) {
                             indexer++;
                             _splitted.Add(new string(new[] { Char.ToLower(c) }));
                         } else {
@@ -31,12 +30,12 @@
                     break;
                 case Case.CamelCase:
                     indexer = 0;
-                    _splitted = new();
+                    _splitted = new List<string>();
                     _splitted.Add("");
                     foreach (char c in input) {
-                        if (Char.IsUpper(c)) {
+                        if (char.IsUpper(c)) {
                             indexer++;
-                            _splitted.Add(new string(new[] { Char.ToLower(c) }));
+                            _splitted.Add(new string(new[] { char.ToLower(c) }));
                         } else {
                             _splitted[indexer] += c;
                         }
@@ -54,13 +53,13 @@
                 case Case.PascalCase:
                     return string.Join("", splitted.Select(s => s.FirstCharToUpper()));
                 case Case.CamelCase:
-                    return $"{splitted[0]}{string.Join("", splitted.Skip(1).Select(s => s.FirstCharToUpper()))}";
+                    return $"{splitted[0].ToLower()}{string.Join("", splitted.Skip(1).Select(s => s.FirstCharToUpper()))}";
                 default:
-                    throw new ArgumentException("Output case is not recognizable."); ;
+                    throw new ArgumentException("Output case is not recognizable.");
             }
         }
 
-        public static string FirstCharToUpper(this string input) =>
+        private static string FirstCharToUpper(this string input) =>
             input switch {
                 null => throw new ArgumentNullException(nameof(input)),
                 "" => throw new ArgumentException($"{nameof(input)} cannot be empty.", nameof(input)),

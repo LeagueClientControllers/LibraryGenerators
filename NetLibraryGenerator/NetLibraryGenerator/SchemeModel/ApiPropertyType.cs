@@ -22,7 +22,7 @@ public class ApiPropertyType
 
 public class PrimitiveType : SmartEnum<PrimitiveType>
 {
-    public PrimitiveType(string name, int value): base(name, value) {}
+    private PrimitiveType(string name, int value): base(name, value) {}
     
     public static readonly PrimitiveType Number     = new PrimitiveType("Number", 1);
     public static readonly PrimitiveType Decimal    = new PrimitiveType("Decimal", 2);

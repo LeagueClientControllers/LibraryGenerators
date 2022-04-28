@@ -27,10 +27,17 @@ namespace NetLibraryGenerator.Core
 
             ConsoleUtils.ShowInfo("Declarations transformed");
 
-            LocalModel model = ModelGenerator.GenerateLocalModel(@"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", scheme, localDeclarations);
-            List<LocalCategory> newCategories = CategoriesGenerator.GenerateLocalCategories(Path.Combine(Environment.CurrentDirectory, "output"), scheme, model);
-            CoreClassModifier.CorrectCore(@"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", newCategories);
-            EventsGenerator.GenerateEventSystem(@"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", localDeclarations);
+            LocalModel model = ModelGenerator.GenerateLocalModel(
+                @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", scheme, localDeclarations);
+            
+            List<LocalCategory> newCategories = CategoriesGenerator.GenerateLocalCategories(
+                @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", scheme, model);
+            
+            CoreClassModifier.CorrectCore(
+                @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", newCategories);
+            
+            EventsGenerator.GenerateEventSystem(
+                @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", localDeclarations);
             ;
         }
     }

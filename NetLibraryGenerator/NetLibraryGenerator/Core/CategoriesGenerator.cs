@@ -24,7 +24,7 @@ namespace NetLibraryGenerator.Core
             ConsoleUtils.ShowInfo("--------------------------------- Merging categories ------------------------------------");
             foreach (LocalCategory localCategory in localCategories) {
                 ConsoleUtils.ShowInfo($"{localCategory.Name}:");
-                bool categoryFound = CategoriesMerger.MergeCategory(libraryPath, @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", localCategory);
+                bool categoryFound = CategoriesMerger.MergeCategory(libraryPath, localCategory);
                 if (!categoryFound) {
                     ConsoleUtils.ShowInfo($"|—-Old implementation is not found");
                 }
@@ -33,7 +33,7 @@ namespace NetLibraryGenerator.Core
             return localCategories;
         }
 
-        public static List<LocalCategory> BuildCategoriesGraphs(ApiScheme scheme, LocalModel model)
+        private static List<LocalCategory> BuildCategoriesGraphs(ApiScheme scheme, LocalModel model)
         {
             List<LocalCategory> localCategories = new();
 
@@ -62,7 +62,7 @@ namespace NetLibraryGenerator.Core
             return localCategories;
         }
 
-        public static CodeCompileUnit BuildAbstractionGraph(ApiCategory category, string categoryName, LocalModel model, int apiResponseId)
+        private static CodeCompileUnit BuildAbstractionGraph(ApiCategory category, string categoryName, LocalModel model, int apiResponseId)
         {
             CodeCompileUnit compileUnit = new CodeCompileUnit();
 
@@ -136,7 +136,7 @@ namespace NetLibraryGenerator.Core
             return compileUnit;
         }
 
-        public static CodeCompileUnit BuildImplementationGraph(CodeCompileUnit abstraction, ApiCategory category, string categoryName, LocalModel model, int apiResponseId)
+        private static CodeCompileUnit BuildImplementationGraph(CodeCompileUnit abstraction, ApiCategory category, string categoryName, LocalModel model, int apiResponseId)
         {
             CodeCompileUnit compileUnit = new CodeCompileUnit();
 
@@ -160,7 +160,7 @@ namespace NetLibraryGenerator.Core
             CodeConstructor constructor = new CodeConstructor();
             constructor.Attributes = MemberAttributes.Public | MemberAttributes.Final;
             constructor.Parameters.Add(new CodeParameterDeclarationExpression(coreClassReference, "api"));
-            constructor.Statements.Add(new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), "_api"), new CodeArgumentReferenceExpression("api")));
+            constructor.Statements.Add(new CodeAssignStatement(new CodeArgumentReferenceExpression("_api"), new CodeArgumentReferenceExpression("api")));
             categoryClass.Members.Add(constructor);
 
 

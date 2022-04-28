@@ -6,6 +6,10 @@ using NetLibraryGenerator.SchemeModel;
 
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+
+using PrimitiveType = NetLibraryGenerator.SchemeModel.PrimitiveType;
 
 namespace NetLibraryGenerator.Utilities
 {
@@ -13,11 +17,6 @@ namespace NetLibraryGenerator.Utilities
     {
         public static string JoinString<T>(this IEnumerable<T> enumerable, string separator) =>
             string.Join(separator, enumerable);
-        
-        public static int GetLength(this Range range)
-        {
-            return range.End.Value - range.Start.Value + 1;
-        }
 
         public static void RemoveRange<T>(this List<T> list, Range range) {
             (int offset, int length) = range.GetOffsetAndLength(list.Count);
@@ -91,21 +90,21 @@ namespace NetLibraryGenerator.Utilities
                 LocalEntityDeclaration referencedDeclaration = localTypes[(int)type.ReferenceId - 1];
                 typeReference = new CodeTypeReference(referencedDeclaration.Name);
             } else if (type.Primitive != null) { 
-                if (type.Primitive == SchemeModel.PrimitiveType.Number) {
+                if (type.Primitive == PrimitiveType.Number) {
                     typeReference = new CodeTypeReference(typeof(int));
-                } else if (type.Primitive == SchemeModel.PrimitiveType.Decimal) {
+                } else if (type.Primitive == PrimitiveType.Decimal) {
                     typeReference = new CodeTypeReference(typeof(decimal));
-                } else if (type.Primitive == SchemeModel.PrimitiveType.String) {
+                } else if (type.Primitive == PrimitiveType.String) {
                     typeReference = new CodeTypeReference(typeof(string));
-                } else if (type.Primitive == SchemeModel.PrimitiveType.Boolean) {
+                } else if (type.Primitive == PrimitiveType.Boolean) {
                     typeReference = new CodeTypeReference(typeof(bool));
-                } else if (type.Primitive == SchemeModel.PrimitiveType.Object) {
+                } else if (type.Primitive == PrimitiveType.Object) {
                     typeReference = new CodeTypeReference(typeof(object));
-                } else if (type.Primitive == SchemeModel.PrimitiveType.Date) {
+                } else if (type.Primitive == PrimitiveType.Date) {
                     typeReference = new CodeTypeReference(typeof(DateTime));
-                } else if (type.Primitive == SchemeModel.PrimitiveType.Array) {
+                } else if (type.Primitive == PrimitiveType.Array) {
                     typeReference = new CodeTypeReference("List");
-                } else if (type.Primitive == SchemeModel.PrimitiveType.Dictionary) {
+                } else if (type.Primitive == PrimitiveType.Dictionary) {
                     typeReference = new CodeTypeReference("Dictionary");
                 } else {
                     throw new ArgumentException("Primitive type is defined but is not recognizable.");
@@ -150,18 +149,18 @@ namespace NetLibraryGenerator.Utilities
             return oldAbstractionInterface.Members.Where(m => m is MethodDeclaration).Cast<MethodDeclaration>().ToList();
         }
 
-        public static List<PropertyDeclaration> ExtractTypeProperties(this SyntaxTree entity, string typeName)
+        public static string ExtractMethodSignature(this MethodDeclaration method)
         {
-            NamespaceDeclaration oldAbstractionNamespace = (NamespaceDeclaration)entity.Members.Last();
-            TypeDeclaration oldAbstractionInterface = (TypeDeclaration)oldAbstractionNamespace.Members.First(m => m is TypeDeclaration tD && tD.Name == typeName);
-            return oldAbstractionInterface.Members.Where(m => m is PropertyDeclaration).Cast<PropertyDeclaration>().ToList();
-        }
+            StringBuilder buffer = new StringBuilder();
+            foreach (AstNode child in method.Children) {
+                if (child is NewLineNode or Comment or AttributeSection) {
+                    continue;
+                }
 
-        public static List<ConstructorDeclaration> ExtractTypeConstructors(this SyntaxTree entity, string typeName)
-        {
-            NamespaceDeclaration oldAbstractionNamespace = (NamespaceDeclaration)entity.Members.Last();
-            TypeDeclaration oldAbstractionInterface = (TypeDeclaration)oldAbstractionNamespace.Members.First(m => m is TypeDeclaration tD && tD.Name == typeName);
-            return oldAbstractionInterface.Members.Where(m => m is ConstructorDeclaration).Cast<ConstructorDeclaration>().ToList();
+                buffer.Append(child);
+            }
+
+            return buffer.ToString();
         }
     }
 }

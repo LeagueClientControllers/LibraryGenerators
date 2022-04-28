@@ -5,11 +5,13 @@ using System.CodeDom.Compiler;
 
 using ICSharpCode.NRefactory.CSharp;
 
+using NetLibraryGenerator.SchemeModel;
+
 namespace NetLibraryGenerator.Core
 {
     public static class CategoriesMerger
     {
-        public static bool MergeCategory(string outputPath, string libraryPath, LocalCategory category)
+        public static bool MergeCategory(string libraryPath, LocalCategory category)
         {
             string oldAbstractionPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, Config.CATEGORIES_ABSTRACTION_FOLDER_NAME, $"I{category.Name}.cs");
             string oldImplementationPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, $"{category.Name}.cs");
@@ -70,6 +72,7 @@ namespace NetLibraryGenerator.Core
             List<MethodDeclaration> newAbstractionMethods = newAbstraction.ExtractTypeMethods($"I{category.Name}");
 
             Dictionary<MethodDeclaration, MethodDeclaration> alreadyAbstractedMethods = new();
+            List<ApiMethod> changedMethods = new List<ApiMethod>();
             foreach (MethodDeclaration newMethod in newAbstractionMethods) {
                 MethodDeclaration? foundMethod = null;
                 foreach (MethodDeclaration oldMethod in oldAbstractionMethods) { 
@@ -81,13 +84,21 @@ namespace NetLibraryGenerator.Core
 
                 if (foundMethod != null) {
                     ConsoleUtils.ShowInfo($"|—-Method '{newMethod.Name}' is already implemented");
+
+                    string newMethodSignature = newMethod.ExtractMethodSignature();
+                    string oldMethodSignature = foundMethod.ExtractMethodSignature();
+                    if (newMethodSignature != oldMethodSignature) {
+                        ConsoleUtils.ShowInfo($"|—-Method '{newMethod.Name}' has been changed"); 
+                        changedMethods.Add(category.InitialCategory.Methods
+                            .First(m => m.Name == newMethod.Name.Replace("Async", "")
+                                .CaseTransform(Case.PascalCase, Case.CamelCase)));
+                    }
+                    
                     alreadyAbstractedMethods.Add(foundMethod, newMethod);
                 }
             }
 
             ConsoleUtils.ShowInfo($"|—-Found {alreadyAbstractedMethods.Count} already implemented methods out of {newAbstractionMethods.Count}");
-            string mergedAbstractionContent = MergeMethods(alreadyAbstractedMethods, oldAbstractionContent, newAbstractionContent);
-            ConsoleUtils.ShowInfo($"|—-Abstraction is merged.");
 
             List<MethodDeclaration> oldImplementationMethods = oldImplementation.ExtractTypeMethods($"{category.Name}");
             List<MethodDeclaration> newImplementationMethods = newImplementation.ExtractTypeMethods($"{category.Name}");
@@ -119,12 +130,12 @@ namespace NetLibraryGenerator.Core
                 alreadyImplementedMethod.Add(oldImplementationMethod, newImplementationMethod);
             }
 
-            string mergedImplementationContent = MergeMethods(alreadyImplementedMethod, oldImplementationContent, newImplementationContent);
+            string mergedImplementationContent = MergeMethods(alreadyImplementedMethod, changedMethods, oldImplementationContent, newImplementationContent);
             ConsoleUtils.ShowInfo($"|—-Implementation is merged.");
 
             using (StreamWriter writer = new StreamWriter(new FileStream(oldAbstractionPath, FileMode.Create, FileAccess.Write))) {
                 writer.WriteLine("#nullable enable");
-                writer.Write(mergedAbstractionContent);
+                writer.Write(newAbstractionContent);
                 writer.WriteLine("");
                 writer.WriteLine("#nullable restore");
             }
@@ -143,50 +154,32 @@ namespace NetLibraryGenerator.Core
             return true;
         } 
 
-        private static string MergeMethods(Dictionary<MethodDeclaration, MethodDeclaration> methods, string oldContent, string newContent)
+        private static string MergeMethods(Dictionary<MethodDeclaration, MethodDeclaration> methods, List<ApiMethod> changedMethods, 
+            string oldContent, string newContent)
         {
             List<string> tabularOldContent = oldContent.Split("\r\n").ToList();
             List<string> tabularNewContent = newContent.Split("\r\n").ToList();
 
             int linesOffset = 0;
-            foreach (var method in methods) {
-                MethodDeclaration oldMethod = method.Key;
-                MethodDeclaration newMethod = method.Value;
+            foreach ((MethodDeclaration? oldMethod, MethodDeclaration? newMethod) in methods) {
+                List<string> oldMethodBody = new();
+                oldMethodBody.AddRange(oldMethod.Body.ToString().Split("\r\n")
+                    .Select(s => string.IsNullOrWhiteSpace(s) ? "" : $"        {s}").Take(..^1));
 
-                List<string> oldMethodContent = new();
-                bool oldMethodEncountered = false;
-                for (int i = oldMethod.StartLocation.Line - 1; i <= oldMethod.EndLocation.Line - 1; ++i) {
-                    string row = tabularOldContent[i];
-                    if (row.Contains(oldMethod.Name)) {
-                        oldMethodEncountered = true;
-                    }
+                tabularNewContent[newMethod.Body.StartLocation.Line - 1 + linesOffset] = 
+                    tabularNewContent[newMethod.Body.StartLocation.Line - 1 + linesOffset][..(newMethod.Body.StartLocation.Column - 1)];
+                tabularNewContent.RemoveRange(
+                    (newMethod.Body.StartLocation.Line + linesOffset)..(newMethod.Body.EndLocation.Line - 1 + linesOffset));
+                tabularNewContent.InsertRange(newMethod.Body.StartLocation.Line + linesOffset, oldMethodBody);
 
-                    if (oldMethodEncountered) {
-                        oldMethodContent.Add(row);
-                    }
+                if (changedMethods.Any(m => $"{m.Name.CaseTransform(Case.CamelCase, Case.PascalCase)}Async" == newMethod.Name)) {
+                    tabularNewContent.Insert(newMethod.StartLocation.Line + linesOffset,
+                        "        /// TODO: Needs revision due to a signature changes.");
+                    linesOffset++;
                 }
-
-                List<int> newMethodLines = new();
-                bool newMethodEncountered = false;
-                for (int i = newMethod.StartLocation.Line + linesOffset - 1; i <= newMethod.EndLocation.Line + linesOffset - 1; ++i) {
-                    string row = tabularNewContent[i];
-                    if (row.Contains(newMethod.Name)) {
-                        newMethodEncountered = true;
-                    }
-
-                    if (newMethodEncountered) {
-                        newMethodLines.Add(i);
-                    }
-                }
-
-                tabularNewContent.RemoveRange(newMethodLines.First(), newMethodLines.Count);
-                int j = newMethodLines.First();
-                foreach (string line in oldMethodContent) {
-                    tabularNewContent.Insert(j, line);
-                    j++;
-                }
-
-                linesOffset += oldMethodContent.Count - newMethodLines.Count;
+                
+                linesOffset += oldMethodBody.Count - (newMethod.Body.EndLocation.Line
+                    - newMethod.Body.StartLocation.Line + (newMethod.Body.StartLocation.Column == 10 ? 1 : 0));
                 ConsoleUtils.ShowInfo($"|—-Method '{oldMethod.Name}' is merged.");
             }
 
