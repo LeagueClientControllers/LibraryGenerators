@@ -32,14 +32,12 @@ namespace NetLibraryGenerator.Core
                     string abstractionPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, Config.CATEGORIES_ABSTRACTION_FOLDER_NAME, $"I{localCategory.Name}.cs");
                     string implementationPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, $"{localCategory.Name}.cs");
 
-                    using (IndentedTextWriter writer = new IndentedTextWriter(
-                            new StreamWriter(new FileStream(abstractionPath, FileMode.Create)), "    ")) {
+                    using (StreamWriter writer = new StreamWriter(new FileStream(abstractionPath, FileMode.Create, FileAccess.Write))) {
                         Generator.CodeProvider.GenerateCodeFromCompileUnit(localCategory.Abstraction, writer, new CodeGeneratorOptions());
                     }
                     ConsoleUtils.ShowInfo($"|—-New abstraction is written");
 
-                    using (IndentedTextWriter writer = new IndentedTextWriter(
-                               new StreamWriter(new FileStream(implementationPath, FileMode.Create)), "    ")) {
+                    using (StreamWriter writer = new StreamWriter(new FileStream(implementationPath, FileMode.Create, FileAccess.Write))) {
                         Generator.CodeProvider.GenerateCodeFromCompileUnit(localCategory.Implementation, writer, new CodeGeneratorOptions());
                     }
                     ConsoleUtils.ShowInfo($"|—-New implementation is written");
@@ -230,7 +228,7 @@ namespace NetLibraryGenerator.Core
 
                 if (method.ResponseId != apiResponseId) {
                     LocalModelEntity responseEntity = model[method.ResponseId];
-                    CodeTypeReference parametersType = new CodeTypeReference($"{responseEntity.Declaration.Namespace}.{responseEntity.Declaration.Name}");
+                    CodeTypeReference parametersType = new CodeTypeReference($"{responseEntity.Declaration.Name}");
                     executeMethodInvocation.Method.TypeArguments.Insert(0, parametersType);
 
                     CodeVariableDeclarationStatement responseDeclaration = new CodeVariableDeclarationStatement(parametersType, "response");

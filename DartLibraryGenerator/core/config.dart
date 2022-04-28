@@ -1,10 +1,10 @@
 const String SUPPORTED_SCHEME_VERSION = "1.0.0";
 
-const String LIBRARY_PACKAGE_NAME = "lcc_api_dart"; 
+const String LIBRARY_PACKAGE_NAME = "larc_api_dart"; 
 const String API_RESPONSE_MODEL_NAME = "ApiResponse";
 const String EVENTS_HANDLER_NAME = "EventsHandler";
 const String CATEGORY_IDENTIFIER = "Category";
-const String LIBRARY_CORE_CLASS = "LccApi";
+const String LIBRARY_CORE_CLASS = "LarcApi";
 
 const String LIBRARY_FOLDER = "lib";
 const String LIBRARY_SOURCE_FOLDER_NAME = "src";
