@@ -1,7 +1,6 @@
 ﻿using NetLibraryGenerator.SchemeModel;
 
 using System.CodeDom;
-using System.Net;
 
 namespace NetLibraryGenerator.Model
 {

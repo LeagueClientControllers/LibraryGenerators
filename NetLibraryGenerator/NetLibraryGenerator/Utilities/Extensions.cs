@@ -6,7 +6,6 @@ using NetLibraryGenerator.SchemeModel;
 
 using System.CodeDom;
 using System.CodeDom.Compiler;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using PrimitiveType = NetLibraryGenerator.SchemeModel.PrimitiveType;

@@ -130,7 +130,7 @@ namespace NetLibraryGenerator.Core
                 alreadyImplementedMethod.Add(oldImplementationMethod, newImplementationMethod);
             }
 
-            string mergedImplementationContent = MergeMethods(alreadyImplementedMethod, changedMethods, oldImplementationContent, newImplementationContent);
+            string mergedImplementationContent = MergeMethods(alreadyImplementedMethod, changedMethods, newImplementationContent);
             ConsoleUtils.ShowInfo($"|—-Implementation is merged.");
 
             using (StreamWriter writer = new StreamWriter(new FileStream(oldAbstractionPath, FileMode.Create, FileAccess.Write))) {
@@ -154,10 +154,8 @@ namespace NetLibraryGenerator.Core
             return true;
         } 
 
-        private static string MergeMethods(Dictionary<MethodDeclaration, MethodDeclaration> methods, List<ApiMethod> changedMethods, 
-            string oldContent, string newContent)
+        private static string MergeMethods(Dictionary<MethodDeclaration, MethodDeclaration> methods, List<ApiMethod> changedMethods, string newContent)
         {
-            List<string> tabularOldContent = oldContent.Split("\r\n").ToList();
             List<string> tabularNewContent = newContent.Split("\r\n").ToList();
 
             int linesOffset = 0;

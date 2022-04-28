@@ -14,7 +14,7 @@ public class ApiEntityProperty
     public ApiPropertyType Type { get; set; } = null!;
 
     [JsonProperty("initialValue")] 
-    public object InitialValue { get; set; } = null!;
+    public object? InitialValue { get; set; }
 
     [JsonProperty("docs")] 
     public JsDocumentationNode[] Docs { get; set; } = null!;

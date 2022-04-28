@@ -6,7 +6,6 @@ using NetLibraryGenerator.Utilities;
 
 using Microsoft.CSharp;
 
-using System.CodeDom;
 using System.CodeDom.Compiler;
 
 namespace NetLibraryGenerator.Core
@@ -38,7 +37,6 @@ namespace NetLibraryGenerator.Core
             
             EventsGenerator.GenerateEventSystem(
                 @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", localDeclarations);
-            ;
         }
     }
 }

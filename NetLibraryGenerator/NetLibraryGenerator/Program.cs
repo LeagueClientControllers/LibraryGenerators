@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using NetLibraryGenerator.Core;
+﻿using NetLibraryGenerator.Core;
 using NetLibraryGenerator.SchemeModel;
 using NetLibraryGenerator.Utilities;
 
@@ -91,9 +89,9 @@ namespace NetLibraryGenerator
             WriteCenter($"C# LARC API LIBRARY GENERATOR");
             Console.WriteLine($"/{starsString}/");
             Console.WriteLine($"/{starsString}/");
-            WriteLeft($"SCHEME VERSION: {_scheme!.SchemeVersion}");
-            WriteLeft($"API VERSION: {_scheme!.ApiVersion}");
-            WriteLeft($"SCHEME GENERATED: {_scheme!.GeneratedAt}");
+            WriteLeft($"SCHEME VERSION: {_scheme.SchemeVersion}");
+            WriteLeft($"API VERSION: {_scheme.ApiVersion}");
+            WriteLeft($"SCHEME GENERATED: {_scheme.GeneratedAt}");
             Console.WriteLine($"/{starsString}/");
         }
     }

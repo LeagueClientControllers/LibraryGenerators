@@ -4,12 +4,14 @@ using NetLibraryGenerator.Utilities;
 
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NetLibraryGenerator.Core
 {
-    public class CategoriesGenerator
+    [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
+    public static class CategoriesGenerator
     {
-        public const string CATEGORIES_NAMESPACE = $"{Config.PROJECT_NAME}.{Config.CATEGORIES_FOLDER_NAME}";
+        private const string CATEGORIES_NAMESPACE = $"{Config.PROJECT_NAME}.{Config.CATEGORIES_FOLDER_NAME}";
         public const string CATEGORIES_ABSTRACTION_NAMESPACE = $"{Config.PROJECT_NAME}.{Config.CATEGORIES_FOLDER_NAME}.{Config.CATEGORIES_ABSTRACTION_FOLDER_NAME}";
 
         public static List<LocalCategory> GenerateLocalCategories(string libraryPath, ApiScheme scheme, LocalModel model)
@@ -27,6 +29,20 @@ namespace NetLibraryGenerator.Core
                 bool categoryFound = CategoriesMerger.MergeCategory(libraryPath, localCategory);
                 if (!categoryFound) {
                     ConsoleUtils.ShowInfo($"|—-Old implementation is not found");
+                    string abstractionPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, Config.CATEGORIES_ABSTRACTION_FOLDER_NAME, $"I{localCategory.Name}.cs");
+                    string implementationPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, $"{localCategory.Name}.cs");
+
+                    using (IndentedTextWriter writer = new IndentedTextWriter(
+                            new StreamWriter(new FileStream(abstractionPath, FileMode.Create)), "    ")) {
+                        Generator.CodeProvider.GenerateCodeFromCompileUnit(localCategory.Abstraction, writer, new CodeGeneratorOptions());
+                    }
+                    ConsoleUtils.ShowInfo($"|—-New abstraction is written");
+
+                    using (IndentedTextWriter writer = new IndentedTextWriter(
+                               new StreamWriter(new FileStream(implementationPath, FileMode.Create)), "    ")) {
+                        Generator.CodeProvider.GenerateCodeFromCompileUnit(localCategory.Implementation, writer, new CodeGeneratorOptions());
+                    }
+                    ConsoleUtils.ShowInfo($"|—-New implementation is written");
                 }
             }
 
@@ -45,8 +61,6 @@ namespace NetLibraryGenerator.Core
             for (int i = 0; i < scheme.Categories.Length; i++) {
                 ApiCategory category = scheme.Categories[i];
                 string categoryName = $"{category.Name.CaseTransform(Case.CamelCase, Case.PascalCase)}{Config.CATEGORY_IDENTIFIER}";
-                string abstractionPath = Path.Combine(Config.PROJECT_NAME, Config.CATEGORIES_FOLDER_NAME, Config.CATEGORIES_ABSTRACTION_FOLDER_NAME, $"I{categoryName}.cs");
-                string implementationPath = Path.Combine(Config.PROJECT_NAME, Config.CATEGORIES_FOLDER_NAME, $"{categoryName}.cs");
 
                 ConsoleUtils.ShowInfo($"{categoryName}:");
                 CodeCompileUnit abstraction = BuildAbstractionGraph(category, categoryName, model, apiResponse.Id);
@@ -101,11 +115,9 @@ namespace NetLibraryGenerator.Core
                         throw new GeneratorException($"Response entity with id {method.ResponseId} not found in scheme.");
                     }
 
-                    if (response.Properties.Count > 1) {
-                        taskReference.TypeArguments.Add(new CodeTypeReference(response.Declaration.Name));
-                    } else {
-                        taskReference.TypeArguments.Add(response.Properties[0].Type);
-                    }
+                    taskReference.TypeArguments.Add(response.Properties.Count > 1
+                        ? new CodeTypeReference(response.Declaration.Name)
+                        : response.Properties[0].Type);
 
                     categoryMethod.ReturnType = taskReference;
                 }
@@ -180,9 +192,9 @@ namespace NetLibraryGenerator.Core
                 categoryMethod.Attributes = MemberAttributes.Public | MemberAttributes.Final;
                 categoryMethod.Comments.Add(new CodeCommentStatement("<inheritdoc />", true));
 
-                CodeMethodInvokeExpression executeMethodInvokation = new CodeMethodInvokeExpression();
-                executeMethodInvokation.Method = new CodeMethodReferenceExpression(new CodeSnippetExpression("await this._api"), "ExecuteAsync");
-                executeMethodInvokation.Parameters.Add(new CodePrimitiveExpression($"/{category.Name}/{method.Name}"));
+                CodeMethodInvokeExpression executeMethodInvocation = new CodeMethodInvokeExpression();
+                executeMethodInvocation.Method = new CodeMethodReferenceExpression(new CodeSnippetExpression("await this._api"), "ExecuteAsync");
+                executeMethodInvocation.Parameters.Add(new CodePrimitiveExpression($"/{category.Name}/{method.Name}"));
 
                 using (MemoryStream stream = new MemoryStream()) {
                     StreamWriter writer = new StreamWriter(stream);
@@ -199,7 +211,7 @@ namespace NetLibraryGenerator.Core
                     LocalModelEntity parameters = model[(int)method.ParametersId];
                     CodeTypeReference parametersType = new CodeTypeReference(parameters.Declaration.Name);
                     CodeVariableDeclarationStatement parametersCreationStatement = new CodeVariableDeclarationStatement(parametersType, "parameters");
-                    executeMethodInvokation.Method.TypeArguments.Add(parametersType);
+                    executeMethodInvocation.Method.TypeArguments.Add(parametersType);
                     
                     CodeObjectCreateExpression parameterCreateExpression = new CodeObjectCreateExpression(parametersType);
                     parametersCreationStatement.InitExpression = parameterCreateExpression;
@@ -208,7 +220,7 @@ namespace NetLibraryGenerator.Core
                         parameterCreateExpression.Parameters.Add(new CodeArgumentReferenceExpression(categoryMethod.Parameters[b].Name));
                     }
 
-                    executeMethodInvokation.Parameters.Add(new CodeVariableReferenceExpression("parameters"));
+                    executeMethodInvocation.Parameters.Add(new CodeVariableReferenceExpression("parameters"));
 
                     categoryMethod.Statements.Add(new CodeCommentStatement("<auto-generated-safe-area> Code within tag borders shouldn't cause incorrect behavior and will be preserved.", false));
                     categoryMethod.Statements.Add(new CodeCommentStatement("TODO: Add parameters validation", false));
@@ -217,12 +229,12 @@ namespace NetLibraryGenerator.Core
                 }
 
                 if (method.ResponseId != apiResponseId) {
-                    LocalModelEntity responseEntity = model[(int)method.ResponseId];
+                    LocalModelEntity responseEntity = model[method.ResponseId];
                     CodeTypeReference parametersType = new CodeTypeReference($"{responseEntity.Declaration.Namespace}.{responseEntity.Declaration.Name}");
-                    executeMethodInvokation.Method.TypeArguments.Insert(0, parametersType);
+                    executeMethodInvocation.Method.TypeArguments.Insert(0, parametersType);
 
                     CodeVariableDeclarationStatement responseDeclaration = new CodeVariableDeclarationStatement(parametersType, "response");
-                    responseDeclaration.InitExpression = executeMethodInvokation;
+                    responseDeclaration.InitExpression = executeMethodInvocation;
                     categoryMethod.Statements.Add(responseDeclaration);
 
                     categoryMethod.Statements.Add(new CodeCommentStatement("<auto-generated-safe-area> Code within tag borders shouldn't cause incorrect behavior and will be preserved.", false));
@@ -239,11 +251,11 @@ namespace NetLibraryGenerator.Core
                         categoryMethod.Statements.Add(new CodeMethodReturnStatement(propertyReference));
                     }
                 } else {
-                    categoryMethod.Statements.Add(new CodeExpressionStatement(executeMethodInvokation));
+                    categoryMethod.Statements.Add(new CodeExpressionStatement(executeMethodInvocation));
                 }
 
-                executeMethodInvokation.Parameters.Add(new CodePrimitiveExpression(method.RequireAccessToken));
-                executeMethodInvokation.Parameters.Add(new CodeArgumentReferenceExpression("token"));
+                executeMethodInvocation.Parameters.Add(new CodePrimitiveExpression(method.RequireAccessToken));
+                executeMethodInvocation.Parameters.Add(new CodeArgumentReferenceExpression("token"));
                 categoryClass.Members.Add(categoryMethod);
             }
 

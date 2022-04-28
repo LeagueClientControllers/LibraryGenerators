@@ -4,9 +4,11 @@ using NetLibraryGenerator.Utilities;
 
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NetLibraryGenerator.Core
 {
+    [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
     public static class EventsGenerator
     {
         public const string EVENT_SERVICE_NAMESPACE = $"{Config.PROJECT_NAME}.{Config.SERVICES_FOLDER_NAME}";
@@ -54,7 +56,7 @@ namespace NetLibraryGenerator.Core
             ConsoleUtils.ShowInfo($"|--Code is generated and written");
         }
 
-        public static CodeCompileUnit GenerateHandlerGraph(string handlerName, LocalEntityDeclaration @event)
+        private static CodeCompileUnit GenerateHandlerGraph(string handlerName, LocalEntityDeclaration @event)
         {
             CodeCompileUnit compileUnit = new CodeCompileUnit();
 
@@ -79,7 +81,7 @@ namespace NetLibraryGenerator.Core
             return compileUnit;
         }
 
-        public static CodeCompileUnit GenerateEventService(List<LocalEntityDeclaration> events)
+        private static CodeCompileUnit GenerateEventService(List<LocalEntityDeclaration> events)
         {
             CodeCompileUnit compileUnit = new CodeCompileUnit();
 
@@ -130,7 +132,9 @@ namespace NetLibraryGenerator.Core
                 conditionStatement.TrueStatements.Add(eventDeclaration);
 
                 CodeConditionStatement eventNullCheck = new CodeConditionStatement();
+#pragma warning disable CS8625
                 eventNullCheck.Condition = new CodeBinaryOperatorExpression(new CodeVariableReferenceExpression("event"), CodeBinaryOperatorType.ValueEquality, new CodePrimitiveExpression(null));
+#pragma warning restore CS8625
                 eventNullCheck.TrueStatements.Add(new CodeThrowExceptionStatement(new CodeObjectCreateExpression("EventProviderException", new CodePrimitiveExpression("Event object is missing in event message."))));
                 conditionStatement.TrueStatements.Add(eventNullCheck);
                 conditionStatement.TrueStatements.Add(new CodeSnippetStatement(""));

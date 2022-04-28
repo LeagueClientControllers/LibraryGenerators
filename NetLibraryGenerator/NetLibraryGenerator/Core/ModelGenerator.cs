@@ -4,9 +4,11 @@ using NetLibraryGenerator.Utilities;
 
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Diagnostics.CodeAnalysis;
 
 namespace NetLibraryGenerator.Core
 {
+    [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
     public static class ModelGenerator
     {
         public const string MODEL_NAMESPACE = $"{Config.PROJECT_NAME}.{Config.MODEL_FOLDER_NAME}";
@@ -78,7 +80,7 @@ namespace NetLibraryGenerator.Core
                 LocalEntityDeclaration declaration = modelDeclarations[entity.Id - 1];
                 string filePath = Path.Combine(Config.MODEL_FOLDER_NAME, declaration.LocalPath);
 
-                graphs.Add(filePath, BuildEntityGraph(entity, declaration, modelDeclarations, apiResponse.Namespace));
+                graphs.Add(filePath, BuildEntityGraph(entity, declaration, modelDeclarations));
                 ConsoleUtils.ShowInfo($"|--Entity graph for {declaration.Name} is built");
             }
 
@@ -94,7 +96,7 @@ namespace NetLibraryGenerator.Core
         } 
 
 
-        private static LocalModelEntity BuildEntityGraph(ApiEntity entity, LocalEntityDeclaration declaration, List<LocalEntityDeclaration> allDeclarations, string apiResponseReference)
+        private static LocalModelEntity BuildEntityGraph(ApiEntity entity, LocalEntityDeclaration declaration, List<LocalEntityDeclaration> allDeclarations)
         {
             CodeCompileUnit compileUnit = new CodeCompileUnit();
 

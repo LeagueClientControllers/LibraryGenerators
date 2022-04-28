@@ -1,5 +1,6 @@
 ﻿using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Diagnostics.CodeAnalysis;
 
 using ICSharpCode.NRefactory.CSharp;
 
@@ -8,6 +9,7 @@ using NetLibraryGenerator.Utilities;
 
 namespace NetLibraryGenerator.Core
 {
+    [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
     public static class CoreClassModifier
     {
         public static void CorrectCore(string libraryPath, List<LocalCategory> categories)
