@@ -32,7 +32,8 @@ namespace NetLibraryGenerator
             } catch (GeneratorException e) {
                 ConsoleUtils.ShowError($"Error while generating library: {e.Message}");
             } catch (Exception e) {
-                ConsoleUtils.ShowError($"Fatal exception occured. {e.GetType()}: {e.Message}{e.StackTrace?.Split("\r\n").FirstOrDefault()}");
+                ConsoleUtils.ShowError($"Fatal exception occured. '{e.GetType()}: {e.Message}' " +
+                                       $"{e.StackTrace?.Split("\r\n").FirstOrDefault()?.Replace("   ", "")}");
             }
         }
 
