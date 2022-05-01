@@ -6,4 +6,5 @@
   &lt;PhysicalFolder Path="C:\Users\Lauriero\.nuget\packages\icsharpcode.nrefactory\5.5.1" Loaded="True" /&gt;&#xD;
   &lt;PhysicalFolder Path="C:\Users\Lauriero\.nuget\packages\icsharpcode.nrefactory\6.0.0-beta1" Loaded="True" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\Lauriero\.nuget\packages\mono.cecil\0.9.5.4\lib\net40\Mono.Cecil.dll" /&gt;&#xD;
-&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
+&lt;/AssemblyExplorer&gt;</s:String>
+	</wpf:ResourceDictionary>

@@ -9,7 +9,9 @@ namespace NetLibraryGenerator.Model
         public string Name { get; }
         public ApiCategory InitialCategory { get; }
         public CodeCompileUnit Abstraction { get; }
-        public CodeCompileUnit Implementation { get; }
+        public CodeCompileUnit Implementation { get; }  
+        
+        public List<string> ChangedMethods { get; } = new();
 
         public LocalCategory(string name, CodeCompileUnit abstraction, CodeCompileUnit implementation, ApiCategory initialCategory)
         {

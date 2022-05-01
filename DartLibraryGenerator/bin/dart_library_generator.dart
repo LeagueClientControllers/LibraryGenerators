@@ -23,7 +23,7 @@ Future main(List<String> arguments) async {
 FutureOr handledArea(List<String> arguments) async {
   ConsoleUtilities.info("Parsing API scheme...");
 
-  String apiSchemePath = "D:\\Development\\GitHub\\LeagueClientControllers\\WebServer\\api-scheme.json";
+  String apiSchemePath = "D:\\Development\\GitHub\\LARC\\WebServer\\api-scheme.json";
   File apiSchemeFile = File(apiSchemePath);
   if (!apiSchemeFile.existsSync()) {
     throw LibraryGeneratorException(message: "File with API scheme not found at provided path.");

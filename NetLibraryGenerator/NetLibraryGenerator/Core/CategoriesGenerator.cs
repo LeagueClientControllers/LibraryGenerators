@@ -14,7 +14,7 @@ namespace NetLibraryGenerator.Core
         private const string CATEGORIES_NAMESPACE = $"{Config.PROJECT_NAME}.{Config.CATEGORIES_FOLDER_NAME}";
         public const string CATEGORIES_ABSTRACTION_NAMESPACE = $"{Config.PROJECT_NAME}.{Config.CATEGORIES_FOLDER_NAME}.{Config.CATEGORIES_ABSTRACTION_FOLDER_NAME}";
 
-        public static List<LocalCategory> GenerateLocalCategories(string libraryPath, ApiScheme scheme, LocalModel model)
+        public static async Task<List<LocalCategory>> GenerateLocalCategories(string libraryPath, ApiScheme scheme, LocalModel model)
         {
             Console.WriteLine();
             ConsoleUtils.ShowInfo("------------------------------- Generating categories -----------------------------------");
@@ -26,21 +26,25 @@ namespace NetLibraryGenerator.Core
             ConsoleUtils.ShowInfo("--------------------------------- Merging categories ------------------------------------");
             foreach (LocalCategory localCategory in localCategories) {
                 ConsoleUtils.ShowInfo($"{localCategory.Name}:");
-                bool categoryFound = CategoriesMerger.MergeCategory(libraryPath, localCategory);
+                (bool categoryFound, List<ApiMethod> changedMethods) = 
+                    CategoriesMerger.MergeCategory(libraryPath, localCategory);
+                
                 if (!categoryFound) {
-                    ConsoleUtils.ShowInfo($"|—-Old implementation is not found");
+                    ConsoleUtils.ShowWarning($"|—-Old implementation of {localCategory.Name} is not found");
                     string abstractionPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, Config.CATEGORIES_ABSTRACTION_FOLDER_NAME, $"I{localCategory.Name}.cs");
                     string implementationPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, $"{localCategory.Name}.cs");
 
-                    using (StreamWriter writer = new StreamWriter(new FileStream(abstractionPath, FileMode.Create, FileAccess.Write))) {
+                    await using (StreamWriter writer = new StreamWriter(new FileStream(abstractionPath, FileMode.Create, FileAccess.Write))) {
                         Generator.CodeProvider.GenerateCodeFromCompileUnit(localCategory.Abstraction, writer, new CodeGeneratorOptions());
                     }
                     ConsoleUtils.ShowInfo($"|—-New abstraction is written");
 
-                    using (StreamWriter writer = new StreamWriter(new FileStream(implementationPath, FileMode.Create, FileAccess.Write))) {
+                    await using (StreamWriter writer = new StreamWriter(new FileStream(implementationPath, FileMode.Create, FileAccess.Write))) {
                         Generator.CodeProvider.GenerateCodeFromCompileUnit(localCategory.Implementation, writer, new CodeGeneratorOptions());
                     }
                     ConsoleUtils.ShowInfo($"|—-New implementation is written");
+                } else {
+                    localCategory.ChangedMethods.AddRange(changedMethods.Select(m => m.Name));
                 }
             }
 
@@ -108,10 +112,7 @@ namespace NetLibraryGenerator.Core
                     categoryMethod.ReturnType = new CodeTypeReference("Task");
                 } else {
                     CodeTypeReference taskReference = new CodeTypeReference("Task");
-                    LocalModelEntity? response = model[method.ResponseId];
-                    if (response == null) {
-                        throw new GeneratorException($"Response entity with id {method.ResponseId} not found in scheme.");
-                    }
+                    LocalModelEntity response = model[method.ResponseId];
 
                     taskReference.TypeArguments.Add(response.Properties.Count > 1
                         ? new CodeTypeReference(response.Declaration.Name)
@@ -191,7 +192,7 @@ namespace NetLibraryGenerator.Core
                 categoryMethod.Comments.Add(new CodeCommentStatement("<inheritdoc />", true));
 
                 CodeMethodInvokeExpression executeMethodInvocation = new CodeMethodInvokeExpression();
-                executeMethodInvocation.Method = new CodeMethodReferenceExpression(new CodeSnippetExpression("await this._api"), "ExecuteAsync");
+                executeMethodInvocation.Method = new CodeMethodReferenceExpression(new CodeSnippetExpression("await _api"), "ExecuteAsync");
                 executeMethodInvocation.Parameters.Add(new CodePrimitiveExpression($"/{category.Name}/{method.Name}"));
 
                 using (MemoryStream stream = new MemoryStream()) {
@@ -258,6 +259,6 @@ namespace NetLibraryGenerator.Core
             }
 
             return compileUnit;
-        }
+        }   
     }
 }

@@ -12,7 +12,7 @@ namespace NetLibraryGenerator.Core
     [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
     public static class CoreClassModifier
     {
-        public static void CorrectCore(string libraryPath, List<LocalCategory> categories)
+        public static async Task CorrectCore(string libraryPath, List<LocalCategory> categories)
         {
             if (categories.Count == 0) {
                 return;
@@ -29,14 +29,14 @@ namespace NetLibraryGenerator.Core
             SyntaxTree coreAbstraction;
             string? coreAbstractionContent;
             using (StreamReader reader = new StreamReader(new FileStream(coreAbstractionPath, FileMode.Open, FileAccess.Read))) {
-                coreAbstractionContent = reader.ReadToEnd();
+                coreAbstractionContent = await reader.ReadToEndAsync();
                 coreAbstraction = Generator.CodeParser.Parse(coreAbstractionContent);
             }
             
             ConsoleUtils.ShowInfo("Core abstraction is parsed");
             string modifiedCoreAbstraction = ModifyAbstraction(coreAbstractionContent, coreAbstraction, categories);
-            using (StreamWriter writer = new StreamWriter(new FileStream(coreAbstractionPath, FileMode.Create, FileAccess.Write))) {
-                writer.Write(modifiedCoreAbstraction);
+            await using (StreamWriter writer = new StreamWriter(new FileStream(coreAbstractionPath, FileMode.Create, FileAccess.Write))) {
+                await writer.WriteAsync(modifiedCoreAbstraction);
             }
             
             ConsoleUtils.ShowInfo("|—-Abstraction is updated.");
@@ -45,14 +45,14 @@ namespace NetLibraryGenerator.Core
             SyntaxTree coreImplementation;
             string? coreImplementationContent;
             using (StreamReader reader = new StreamReader(new FileStream(coreImplementationPath, FileMode.Open, FileAccess.Read))) {
-                coreImplementationContent = reader.ReadToEnd();
+                coreImplementationContent = await reader.ReadToEndAsync();
                 coreImplementation = Generator.CodeParser.Parse(coreImplementationContent);
             }
             
             ConsoleUtils.ShowInfo("Core implementation is parsed");
             string modifiedCoreImplementation = ModifyImplementation(coreImplementationContent, coreImplementation, categories);
-            using (StreamWriter writer = new StreamWriter(new FileStream(coreImplementationPath, FileMode.Create, FileAccess.Write))) {
-                writer.Write(modifiedCoreImplementation);
+            await using (StreamWriter writer = new StreamWriter(new FileStream(coreImplementationPath, FileMode.Create, FileAccess.Write))) {
+                await writer.WriteAsync(modifiedCoreImplementation);
             }
             
             ConsoleUtils.ShowInfo("|—-Implementation is updated.");

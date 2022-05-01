@@ -10,6 +10,7 @@
     <ItemGroup>
       <PackageReference Include="Ardalis.SmartEnum" Version="2.1.0" />
       <PackageReference Include="Ardalis.SmartEnum.JsonNet" Version="2.1.0" />
+      <PackageReference Include="CommandLineParser" Version="2.8.0" />
       <PackageReference Include="ICSharpCode.NRefactory" Version="5.5.1" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
       <PackageReference Include="System.CodeDom" Version="7.0.0-preview.3.22175.4" />

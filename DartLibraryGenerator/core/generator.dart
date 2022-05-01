@@ -38,14 +38,14 @@ FutureOr generateLibrary(ApiScheme scheme) async {
       List.generate(scheme.model.declarations.length, (i) => LocalEntityDeclaration(scheme.model.declarations[i]));
 
   LocalModel model = await generateModel(
-      r"D:\Development\GitHub\LeagueClientControllers\lcc_api_dart", scheme.model, modelDeclarations);
+      r"D:\Development\GitHub\LARC\lcc_api_dart", scheme.model, modelDeclarations);
   
   await generateCategories(
-      r"D:\Development\GitHub\LeagueClientControllers\lcc_api_dart", scheme.categories, model);
+      r"D:\Development\GitHub\LARC\lcc_api_dart", scheme.categories, model);
 
   await modifyCore(
-      r"D:\Development\GitHub\LeagueClientControllers\lcc_api_dart", scheme.categories);
+      r"D:\Development\GitHub\LARC\lcc_api_dart", scheme.categories);
 
   await generateEventsHandler(
-      r"D:\Development\GitHub\LeagueClientControllers\lcc_api_dart", model);
+      r"D:\Development\GitHub\LARC\lcc_api_dart", model);
 }

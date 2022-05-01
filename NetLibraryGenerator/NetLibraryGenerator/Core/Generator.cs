@@ -8,6 +8,8 @@ using Microsoft.CSharp;
 
 using System.CodeDom.Compiler;
 
+using Newtonsoft.Json;
+
 namespace NetLibraryGenerator.Core
 {
     public static class Generator
@@ -15,7 +17,7 @@ namespace NetLibraryGenerator.Core
         public static readonly CSharpParser CodeParser = new CSharpParser();
         public static readonly CodeDomProvider CodeProvider = new CSharpCodeProvider(); 
 
-        public static void GenerateLibrary(ApiScheme scheme)
+        public static async Task<GenerationResults> GenerateLibrary(string libraryPath, ApiScheme scheme)
         {
             ConsoleUtils.ShowInfo("Transforming declarations to local...");
 
@@ -26,17 +28,21 @@ namespace NetLibraryGenerator.Core
 
             ConsoleUtils.ShowInfo("Declarations transformed");
 
-            LocalModel model = ModelGenerator.GenerateLocalModel(
-                @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", scheme, localDeclarations);
+            LocalModel model = await ModelGenerator.GenerateLocalModel(libraryPath, scheme, localDeclarations);
+            List<LocalCategory> newCategories = await CategoriesGenerator.GenerateLocalCategories(
+                libraryPath, scheme, model);
             
-            List<LocalCategory> newCategories = CategoriesGenerator.GenerateLocalCategories(
-                @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", scheme, model);
-            
-            CoreClassModifier.CorrectCore(
-                @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", newCategories);
-            
-            EventsGenerator.GenerateEventSystem(
-                @"D:\Development\GitHub\LeagueClientControllers\LccApiNet\LccApiNet", localDeclarations);
+            await CoreClassModifier.CorrectCore(libraryPath, newCategories);
+            await EventsGenerator.GenerateEventSystem(libraryPath, localDeclarations);
+
+            GenerationResults results = new GenerationResults();
+            foreach (LocalCategory localCategory in newCategories) {
+                foreach (string method in localCategory.ChangedMethods) {
+                    results.ChangedMethods.Add(new ChangedMethod(localCategory.InitialCategory.Name, method));
+                }
+            }
+
+            return results;
         }
     }
 }

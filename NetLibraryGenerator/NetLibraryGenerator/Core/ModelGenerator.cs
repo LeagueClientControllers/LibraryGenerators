@@ -13,7 +13,7 @@ namespace NetLibraryGenerator.Core
     {
         public const string MODEL_NAMESPACE = $"{Config.PROJECT_NAME}.{Config.MODEL_FOLDER_NAME}";
 
-        public static LocalModel GenerateLocalModel(string libraryPath, ApiScheme scheme, List<LocalEntityDeclaration> modelDeclarations)
+        public static async Task<LocalModel> GenerateLocalModel(string libraryPath, ApiScheme scheme, List<LocalEntityDeclaration> modelDeclarations)
         {
             Console.WriteLine();
             ConsoleUtils.ShowInfo("------------------------------- Generating model -----------------------------------");
@@ -37,11 +37,11 @@ namespace NetLibraryGenerator.Core
                 string outputPath = Path.Combine(libraryPath, graph.Key);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-                using (StreamWriter writer = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.Write))) {
-                    writer.WriteLine("#nullable enable");
+                await using (StreamWriter writer = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.Write))) {
+                    await writer.WriteLineAsync("#nullable enable");
                     Generator.CodeProvider.GenerateCodeFromCompileUnit(graph.Value.Implementation, writer, new CodeGeneratorOptions());
-                    writer.WriteLine("");
-                    writer.WriteLine("#nullable restore");
+                    await writer.WriteLineAsync("");
+                    await writer.WriteLineAsync("#nullable restore");
                 }
             }
             ConsoleUtils.ShowInfo("New code is generated and inserted into library");

@@ -13,7 +13,7 @@ namespace NetLibraryGenerator.Core
     {
         public const string EVENT_SERVICE_NAMESPACE = $"{Config.PROJECT_NAME}.{Config.SERVICES_FOLDER_NAME}";
 
-        public static void GenerateEventSystem(string libraryPath, List<LocalEntityDeclaration> modelDeclarations)
+        public static async Task GenerateEventSystem(string libraryPath, List<LocalEntityDeclaration> modelDeclarations)
         {
             Console.WriteLine();
             ConsoleUtils.ShowInfo("---------------------------- Generating event system -------------------------------");
@@ -32,11 +32,11 @@ namespace NetLibraryGenerator.Core
             }
 
             foreach (KeyValuePair<string, CodeCompileUnit> graph in handlerGraphs) {
-                using (StreamWriter writer = new StreamWriter(new FileStream(graph.Key, FileMode.Create, FileAccess.Write))) {
-                    writer.WriteLine("#nullable enable");
+                await using (StreamWriter writer = new StreamWriter(new FileStream(graph.Key, FileMode.Create, FileAccess.Write))) {
+                    await writer.WriteLineAsync("#nullable enable");
                     Generator.CodeProvider.GenerateCodeFromCompileUnit(graph.Value, writer, new CodeGeneratorOptions());
-                    writer.WriteLine("");
-                    writer.WriteLine("#nullable restore");
+                    await writer.WriteLineAsync("");
+                    await writer.WriteLineAsync("#nullable restore");
                 }
             }
 
@@ -46,11 +46,11 @@ namespace NetLibraryGenerator.Core
             CodeCompileUnit serviceGraph = GenerateEventService(eventDeclarations);
             ConsoleUtils.ShowInfo($"|--Graph is generated");
 
-            using (StreamWriter writer = new StreamWriter(new FileStream(Path.Combine(libraryPath, Config.SERVICES_FOLDER_NAME, $"{Config.EVENT_SERVICE_NAME}.g.cs"), FileMode.Create, FileAccess.Write))) {
-                writer.WriteLine("#nullable enable");
+            await using (StreamWriter writer = new StreamWriter(new FileStream(Path.Combine(libraryPath, Config.SERVICES_FOLDER_NAME, $"{Config.EVENT_SERVICE_NAME}.g.cs"), FileMode.Create, FileAccess.Write))) {
+                await writer.WriteLineAsync("#nullable enable");
                 Generator.CodeProvider.GenerateCodeFromCompileUnit(serviceGraph, writer, new CodeGeneratorOptions());
-                writer.WriteLine("");
-                writer.WriteLine("#nullable restore");
+                await writer.WriteLineAsync("");
+                await writer.WriteLineAsync("#nullable restore");
             }
 
             ConsoleUtils.ShowInfo($"|--Code is generated and written");

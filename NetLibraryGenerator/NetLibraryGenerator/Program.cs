@@ -1,4 +1,10 @@
-﻿using NetLibraryGenerator.Core;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+
+using CommandLine;
+
+using NetLibraryGenerator.Core;
+using NetLibraryGenerator.Model;
 using NetLibraryGenerator.SchemeModel;
 using NetLibraryGenerator.Utilities;
 
@@ -9,20 +15,46 @@ namespace NetLibraryGenerator
     public static class Program
     {
         private const string SUPPORTED_SCHEME_VERSION = "1.0.0";
-        private const ConsoleColor DEFAULT_COLOR = ConsoleColor.Green;
 
         private static ApiScheme? _scheme;
 
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            Console.ForegroundColor = DEFAULT_COLOR;
+            Console.ForegroundColor = ConsoleUtils.DEFAULT_COLOR;
+
+            try {
+                await Parser.Default.ParseArguments<CommandLineOptions>(args).MapResult(Run,
+                    _ => Task.FromResult(-1));
+            } catch (GeneratorException e) {
+                ConsoleUtils.ShowError($"Error while generating library: {e.Message}");
+            } catch (Exception e) {
+                ConsoleUtils.ShowError($"Fatal exception occured. {e.GetType()}: {e.Message}{e.StackTrace?.Split("\r\n").FirstOrDefault()}");
+            }
+        }
+
+        private static async Task Run(CommandLineOptions options)
+        {
+            options.ApiSchemePath = new Regex("(\'|\")")
+                .Replace(options.ApiSchemePath, "");
+            options.LibraryPath = new Regex("(\'|\")")
+                .Replace(options.LibraryPath, "");
+
+            if (!File.Exists(options.ApiSchemePath)) {
+                throw new ArgumentException(
+                    "API scheme path should be valid path to an existing file.");
+            }
+            
+            if (!Directory.Exists(options.LibraryPath)) {
+                throw new ArgumentException(
+                    "Library path should be valid path to an existing directory.");
+            }
+            
             ConsoleUtils.ShowInfo("Parsing scheme...");
 
             string schemeContent;
             using (StreamReader reader =
-                new StreamReader(new FileStream(
-                    @"D:\Development\GitHub\LeagueClientControllers\WebServer\api-scheme.json", FileMode.Open))) {
-                schemeContent = reader.ReadToEnd();
+                new StreamReader(new FileStream(options.ApiSchemePath, FileMode.Open))) {
+                schemeContent = await reader.ReadToEndAsync();
             }
 
             try {
@@ -49,8 +81,10 @@ namespace NetLibraryGenerator
             ShowHeader();
             Console.WriteLine();
 
-            Generator.GenerateLibrary(_scheme);
-
+            GenerationResults results = await Generator.GenerateLibrary(options.LibraryPath, _scheme);
+            Console.WriteLine();
+            Console.WriteLine($"Generation results: {JsonConvert.SerializeObject(results)}");
+            
             Console.ForegroundColor = ConsoleColor.White;
         }
 
