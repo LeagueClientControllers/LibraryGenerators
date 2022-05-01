@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "oj9CVwhGEQ41Ay8U1iR9VIcH8uHx4OiLcyqDN9cuS/vVUvlzqldwONtKyWCf1b3RVR4BjzFCa+MK03IKNW38Mg==",
+  "dgSpecHash": "G2j/Z6UUt62WhT8Ew843E8VeX1hxXr0KyH45HLOuVklxO85McxktnakxyWjerrJozw1/Aj1bG67difEzEP/OYQ==",
   "success": true,
   "projectFilePath": "D:\\Development\\GitHub\\LARC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\NetLibraryGenerator.csproj",
   "expectedPackageFiles": [
@@ -10,17 +10,14 @@
     "C:\\Users\\Lauriero\\.nuget\\packages\\icsharpcode.nrefactory\\5.5.1\\icsharpcode.nrefactory.5.5.1.nupkg.sha512",
     "C:\\Users\\Lauriero\\.nuget\\packages\\mono.cecil\\0.9.5.4\\mono.cecil.0.9.5.4.nupkg.sha512",
     "C:\\Users\\Lauriero\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
-    "C:\\Users\\Lauriero\\.nuget\\packages\\system.codedom\\7.0.0-preview.3.22175.4\\system.codedom.7.0.0-preview.3.22175.4.nupkg.sha512",
-    "C:\\Users\\Lauriero\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-x64\\6.0.1\\microsoft.netcore.app.runtime.linux-x64.6.0.1.nupkg.sha512",
-    "C:\\Users\\Lauriero\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-x64\\6.0.1\\microsoft.aspnetcore.app.runtime.linux-x64.6.0.1.nupkg.sha512",
-    "C:\\Users\\Lauriero\\.nuget\\packages\\microsoft.netcore.app.host.linux-x64\\6.0.1\\microsoft.netcore.app.host.linux-x64.6.0.1.nupkg.sha512"
+    "C:\\Users\\Lauriero\\.nuget\\packages\\system.codedom\\7.0.0-preview.3.22175.4\\system.codedom.7.0.0-preview.3.22175.4.nupkg.sha512"
   ],
   "logs": [
     {
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"ICSharpCode.NRefactory 5.5.1\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\", а не целевой платформы проекта \"net6.0\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'ICSharpCode.NRefactory 5.5.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
       "libraryId": "ICSharpCode.NRefactory",
       "targetGraphs": [
         "net6.0"
@@ -30,7 +27,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"Mono.Cecil 0.9.5.4\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\", а не целевой платформы проекта \"net6.0\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'Mono.Cecil 0.9.5.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
       "libraryId": "Mono.Cecil",
       "targetGraphs": [
         "net6.0"

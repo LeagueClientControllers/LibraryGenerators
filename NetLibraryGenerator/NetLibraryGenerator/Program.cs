@@ -21,10 +21,14 @@ namespace NetLibraryGenerator
         private static async Task Main(string[] args)
         {
             Console.ForegroundColor = ConsoleUtils.DEFAULT_COLOR;
-
+            Console.WriteLine($"This application was executed from '{Environment.CurrentDirectory}'");
+            
             try {
                 await Parser.Default.ParseArguments<CommandLineOptions>(args).MapResult(Run,
-                    _ => Task.FromResult(-1));
+                    _ => {
+                        Console.ForegroundColor = ConsoleColor.White;
+                        return Task.FromResult(-1);
+                    });
             } catch (GeneratorException e) {
                 ConsoleUtils.ShowError($"Error while generating library: {e.Message}");
             } catch (Exception e) {
