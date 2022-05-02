@@ -36,6 +36,7 @@ namespace NetLibraryGenerator.Core
             ConsoleUtils.ShowInfo("Core abstraction is parsed");
             string modifiedCoreAbstraction = ModifyAbstraction(coreAbstractionContent, coreAbstraction, categories);
             await using (StreamWriter writer = new StreamWriter(new FileStream(coreAbstractionPath, FileMode.Create, FileAccess.Write))) {
+                writer.NewLine = "\r\n";
                 await writer.WriteAsync(modifiedCoreAbstraction);
             }
             
@@ -52,6 +53,7 @@ namespace NetLibraryGenerator.Core
             ConsoleUtils.ShowInfo("Core implementation is parsed");
             string modifiedCoreImplementation = ModifyImplementation(coreImplementationContent, coreImplementation, categories);
             await using (StreamWriter writer = new StreamWriter(new FileStream(coreImplementationPath, FileMode.Create, FileAccess.Write))) {
+                writer.NewLine = "\r\n";
                 await writer.WriteAsync(modifiedCoreImplementation);
             }
             

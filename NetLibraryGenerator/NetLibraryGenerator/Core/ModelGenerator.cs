@@ -38,6 +38,8 @@ namespace NetLibraryGenerator.Core
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
                 await using (StreamWriter writer = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.Write))) {
+                    writer.NewLine = "\r\n";
+                    
                     await writer.WriteLineAsync("#nullable enable");
                     Generator.CodeProvider.GenerateCodeFromCompileUnit(graph.Value.Implementation, writer, new CodeGeneratorOptions());
                     await writer.WriteLineAsync("");

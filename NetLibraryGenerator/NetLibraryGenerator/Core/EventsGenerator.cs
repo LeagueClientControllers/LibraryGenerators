@@ -33,6 +33,7 @@ namespace NetLibraryGenerator.Core
 
             foreach (KeyValuePair<string, CodeCompileUnit> graph in handlerGraphs) {
                 await using (StreamWriter writer = new StreamWriter(new FileStream(graph.Key, FileMode.Create, FileAccess.Write))) {
+                    writer.NewLine = "\r\n";
                     await writer.WriteLineAsync("#nullable enable");
                     Generator.CodeProvider.GenerateCodeFromCompileUnit(graph.Value, writer, new CodeGeneratorOptions());
                     await writer.WriteLineAsync("");
@@ -47,6 +48,7 @@ namespace NetLibraryGenerator.Core
             ConsoleUtils.ShowInfo($"|--Graph is generated");
 
             await using (StreamWriter writer = new StreamWriter(new FileStream(Path.Combine(libraryPath, Config.SERVICES_FOLDER_NAME, $"{Config.EVENT_SERVICE_NAME}.g.cs"), FileMode.Create, FileAccess.Write))) {
+                writer.NewLine = "\r\n";
                 await writer.WriteLineAsync("#nullable enable");
                 Generator.CodeProvider.GenerateCodeFromCompileUnit(serviceGraph, writer, new CodeGeneratorOptions());
                 await writer.WriteLineAsync("");

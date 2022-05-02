@@ -23,13 +23,13 @@ namespace NetLibraryGenerator.Core
 
             SyntaxTree oldAbstraction;
             using (StreamReader reader = new StreamReader(new FileStream(oldAbstractionPath, FileMode.Open, FileAccess.Read))) {
-                string? oldAbstractionContent = reader.ReadToEnd();
+                string oldAbstractionContent = reader.ReadToEnd();
                 oldAbstraction = Generator.CodeParser.Parse(oldAbstractionContent);
             }
 
             SyntaxTree oldImplementation;
             using (StreamReader reader = new StreamReader(new FileStream(oldImplementationPath, FileMode.Open, FileAccess.Read))) {
-                string? oldImplementationContent = reader.ReadToEnd();
+                string oldImplementationContent = reader.ReadToEnd();
                 oldImplementation = Generator.CodeParser.Parse(oldImplementationContent);
             }
 
@@ -132,6 +132,7 @@ namespace NetLibraryGenerator.Core
             ConsoleUtils.ShowInfo($"|—-Implementation is merged.");
 
             using (StreamWriter writer = new StreamWriter(new FileStream(oldAbstractionPath, FileMode.Create, FileAccess.Write))) {
+                writer.NewLine = "\r\n";
                 writer.WriteLine("#nullable enable");
                 writer.Write(newAbstractionContent);
                 writer.WriteLine("");
@@ -141,6 +142,7 @@ namespace NetLibraryGenerator.Core
             ConsoleUtils.ShowInfo($"|—-Abstraction is updated.");
 
             using (StreamWriter writer = new StreamWriter(new FileStream(oldImplementationPath, FileMode.Create, FileAccess.Write))) {
+                writer.NewLine = "\r\n";
                 writer.WriteLine("#nullable enable");
                 writer.Write(mergedImplementationContent);
                 writer.WriteLine("");

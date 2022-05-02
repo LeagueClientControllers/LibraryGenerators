@@ -35,11 +35,13 @@ namespace NetLibraryGenerator.Core
                     string implementationPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, $"{localCategory.Name}.cs");
 
                     await using (StreamWriter writer = new StreamWriter(new FileStream(abstractionPath, FileMode.Create, FileAccess.Write))) {
+                        writer.NewLine = "\r\n";
                         Generator.CodeProvider.GenerateCodeFromCompileUnit(localCategory.Abstraction, writer, new CodeGeneratorOptions());
                     }
                     ConsoleUtils.ShowInfo($"|—-New abstraction is written");
 
                     await using (StreamWriter writer = new StreamWriter(new FileStream(implementationPath, FileMode.Create, FileAccess.Write))) {
+                        writer.NewLine = "\r\n";
                         Generator.CodeProvider.GenerateCodeFromCompileUnit(localCategory.Implementation, writer, new CodeGeneratorOptions());
                     }
                     ConsoleUtils.ShowInfo($"|—-New implementation is written");
