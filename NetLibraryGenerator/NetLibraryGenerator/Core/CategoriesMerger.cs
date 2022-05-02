@@ -40,6 +40,7 @@ namespace NetLibraryGenerator.Core
             string? newAbstractionContent;
             using (MemoryStream stream = new MemoryStream()) {
                 StreamWriter writer = new StreamWriter(stream);
+                writer.NewLine = "\r\n";
                 Generator.CodeProvider.GenerateCodeFromCompileUnit(category.Abstraction, writer, new CodeGeneratorOptions());
                 writer.Flush();
                 stream.Position = 0;
@@ -54,6 +55,7 @@ namespace NetLibraryGenerator.Core
             string? newImplementationContent;
             using (MemoryStream stream = new MemoryStream()) {
                 StreamWriter writer = new StreamWriter(stream);
+                writer.NewLine = "\r\n";
                 Generator.CodeProvider.GenerateCodeFromCompileUnit(category.Implementation, writer, new CodeGeneratorOptions());
                 writer.Flush();
                 stream.Position = 0;

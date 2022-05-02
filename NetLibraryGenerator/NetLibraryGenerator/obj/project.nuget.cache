@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "BHxKUSRrOdPcHE2TEfK8/0QolKu0q6a4cQlHQrzxNqn5rlDDmo0AiuZeybOdi6KnC6BjEe6Am1y3s5PGcvbbyw==",
+  "dgSpecHash": "0yUvVd0sgf3dfpiyAqdbWuchoD2M+ebWYtQqZ6i0FRzy+UGdEG1bymgWLQSh1aOZHRzP5GKgbkIy6VrHmwT90g==",
   "success": true,
   "projectFilePath": "D:\\Development\\GitHub\\LARC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\NetLibraryGenerator.csproj",
   "expectedPackageFiles": [
@@ -11,9 +11,9 @@
     "C:\\Users\\Lauriero\\.nuget\\packages\\mono.cecil\\0.9.5.4\\mono.cecil.0.9.5.4.nupkg.sha512",
     "C:\\Users\\Lauriero\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
     "C:\\Users\\Lauriero\\.nuget\\packages\\system.codedom\\7.0.0-preview.3.22175.4\\system.codedom.7.0.0-preview.3.22175.4.nupkg.sha512",
-    "C:\\Users\\Lauriero\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-arm64\\6.0.1\\microsoft.netcore.app.runtime.linux-arm64.6.0.1.nupkg.sha512",
-    "C:\\Users\\Lauriero\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-arm64\\6.0.1\\microsoft.aspnetcore.app.runtime.linux-arm64.6.0.1.nupkg.sha512",
-    "C:\\Users\\Lauriero\\.nuget\\packages\\microsoft.netcore.app.host.linux-arm64\\6.0.1\\microsoft.netcore.app.host.linux-arm64.6.0.1.nupkg.sha512"
+    "C:\\Users\\Lauriero\\.nuget\\packages\\microsoft.netcore.app.runtime.linux-x64\\6.0.1\\microsoft.netcore.app.runtime.linux-x64.6.0.1.nupkg.sha512",
+    "C:\\Users\\Lauriero\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.linux-x64\\6.0.1\\microsoft.aspnetcore.app.runtime.linux-x64.6.0.1.nupkg.sha512",
+    "C:\\Users\\Lauriero\\.nuget\\packages\\microsoft.netcore.app.host.linux-x64\\6.0.1\\microsoft.netcore.app.host.linux-x64.6.0.1.nupkg.sha512"
   ],
   "logs": [
     {
