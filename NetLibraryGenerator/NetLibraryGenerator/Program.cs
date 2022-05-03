@@ -14,7 +14,7 @@ namespace NetLibraryGenerator
 {
     public static class Program
     {
-        private const string SUPPORTED_SCHEME_VERSION = "1.0.0";
+        private const string SUPPORTED_SCHEME_VERSION = "1.1.0";
 
         private static ApiScheme? _scheme;
 

@@ -12,4 +12,7 @@ public class ApiEntity
 
     [JsonProperty("docs")] 
     public JsDocumentationNode[] Docs { get; set; } = null!;
+    
+    [JsonProperty("modifiable")]
+    public bool Modifiable { get; set; }
 }

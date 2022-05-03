@@ -5,6 +5,8 @@ using NetLibraryGenerator.Utilities;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection.Metadata;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace NetLibraryGenerator.Core
 {
@@ -113,6 +115,10 @@ namespace NetLibraryGenerator.Core
             entityClass.Comments.Add(entity.Docs.ToCSharpDoc());
             entityNamespace.Types.Add(entityClass);
 
+            if (entity.Modifiable) {
+                entityClass.BaseTypes.Add(new CodeTypeReference("BindableBase"));
+            }
+            
             if (declaration.Kind == ApiEntityKind.Response) {
                 entityClass.BaseTypes.Add(new CodeTypeReference(Config.RESPONSE_BASE_CLASS_NAME));
             }
@@ -126,43 +132,85 @@ namespace NetLibraryGenerator.Core
             List<LocalEntityProperty> localProperties = new List<LocalEntityProperty>();
             foreach (ApiEntityProperty property in entity.Properties.OrderBy(p => p.InitialValue == null)) {
                 string propertyName = property.Name.CaseTransform(Case.CamelCase, Case.PascalCase);
-                CodeMemberField entityProperty = new CodeMemberField {
-                    Attributes = MemberAttributes.Public | MemberAttributes.Final,
-                    Name = propertyName,
-                };
+                CodeTypeReference propertyType = property.Type.ToTypeReference(allDeclarations);
+                
+                if (property.Modifiable) {
+                    CodeMemberField @private = new CodeMemberField(propertyType, $"_{property.Name}") {
+                        Attributes = MemberAttributes.Private | MemberAttributes.Final
+                    };
 
-                entityProperty.Type = property.Type.ToTypeReference(allDeclarations);
-                entityProperty.Comments.Add(property.Docs.ToCSharpDoc());
-                entityProperty.CustomAttributes.Add(BuildJsonPropertyAttributeDeclaration(property.JsonName));
+                    CodeMemberProperty modifiableEntityProperty = new CodeMemberProperty() {
+                        Name = propertyName,
+                        Attributes = MemberAttributes.Public | MemberAttributes.Final,
+                        HasGet = true,
+                        HasSet = true,
+                        Type = propertyType
+                    };
 
-                if (property.Type.ReferenceId != null) {
-                    LocalEntityDeclaration referenceType = allDeclarations[(int)property.Type.ReferenceId - 1];
-                    if (referenceType.Kind == ApiEntityKind.Enum) {
-                        entityProperty.CustomAttributes.Add(BuildJsonEnumConverterAttributeDeclaration(referenceType.Name));
+                    modifiableEntityProperty.GetStatements.Add(
+                        new CodeMethodReturnStatement(new CodeArgumentReferenceExpression($"_{property.Name}")));
+
+                    CodeMethodInvokeExpression setProperty = new CodeMethodInvokeExpression(
+                        new CodeMethodReferenceExpression(new CodeThisReferenceExpression(), "SetProperty"),
+                        new CodeSnippetExpression($"ref _{property.Name}"),
+                        new CodeArgumentReferenceExpression("value"));
+
+                    modifiableEntityProperty.SetStatements.Add(setProperty);
+                    modifiableEntityProperty.Comments.Add(property.Docs.ToCSharpDoc());
+                    modifiableEntityProperty.CustomAttributes.Add(BuildJsonPropertyAttributeDeclaration(property.JsonName));
+
+                    if (property.Type.ReferenceId != null) {
+                        LocalEntityDeclaration referenceType = allDeclarations[(int)property.Type.ReferenceId - 1];
+                        if (referenceType.Kind == ApiEntityKind.Enum) {
+                            modifiableEntityProperty.CustomAttributes.Add(BuildJsonEnumConverterAttributeDeclaration(referenceType.Name));
+                        }
                     }
-                }
 
-                string namePostfix = " { get; set; }//";                
-                if (property.InitialValue == null) {
-                    if (!property.Type.Nullable) {
-                        namePostfix = " { get; set; } = default!";
+                    if (property.InitialValue is not null) {
+                        @private.InitExpression = new CodePrimitiveExpression(property.InitialValue);
                     }
+
+                    entityClass.Members.Add(@private);
+                    entityClass.Members.Add(modifiableEntityProperty);
                 } else {
-                    entityProperty.InitExpression = new CodePrimitiveExpression(property.InitialValue);
-                }
+                    CodeMemberField entityProperty = new CodeMemberField {
+                        Attributes = MemberAttributes.Public | MemberAttributes.Final,
+                        Name = propertyName,
+                    };
 
-                entityProperty.Name += namePostfix;
-                entityClass.Members.Add(entityProperty);
-                localProperties.Add(new LocalEntityProperty(entityProperty.Type, property));
+                    entityProperty.Type = property.Type.ToTypeReference(allDeclarations);
+                    entityProperty.Comments.Add(property.Docs.ToCSharpDoc());
+                    entityProperty.CustomAttributes.Add(BuildJsonPropertyAttributeDeclaration(property.JsonName));
+
+                    if (property.Type.ReferenceId != null) {
+                        LocalEntityDeclaration referenceType = allDeclarations[(int)property.Type.ReferenceId - 1];
+                        if (referenceType.Kind == ApiEntityKind.Enum) {
+                            entityProperty.CustomAttributes.Add(BuildJsonEnumConverterAttributeDeclaration(referenceType.Name));
+                        }
+                    }
+
+                    string namePostfix = " { get; set; }//";                
+                    if (property.InitialValue == null) {
+                        if (!property.Type.Nullable) {
+                            namePostfix = " { get; set; } = default!";
+                        }
+                    } else {
+                        entityProperty.InitExpression = new CodePrimitiveExpression(property.InitialValue);
+                    }
+
+                    entityProperty.Name += namePostfix;
+                    entityClass.Members.Add(entityProperty);
+                }
+                localProperties.Add(new LocalEntityProperty(propertyType, property));
 
                 if (entityConstructor == null) {
                     continue;
                 }
                 
                 if (property.InitialValue == null) {
-                    entityConstructor.Parameters.Add(new CodeParameterDeclarationExpression(entityProperty.Type, property.Name));
+                    entityConstructor.Parameters.Add(new CodeParameterDeclarationExpression(propertyType, property.Name));
                 } else {
-                    CodeParameterDeclarationExpression parameterDeclaration = new CodeParameterDeclarationExpression(entityProperty.Type, property.Name.CaseTransform(Case.PascalCase, Case.CamelCase));
+                    CodeParameterDeclarationExpression parameterDeclaration = new CodeParameterDeclarationExpression(propertyType, property.Name.CaseTransform(Case.PascalCase, Case.CamelCase));
                     parameterDeclaration.CustomAttributes.Add(new CodeAttributeDeclaration(new CodeTypeReference("Optional")));
                     if (property.InitialValue != null) {
                         parameterDeclaration.CustomAttributes.Add(BuildDefaultValueAttributeDeclaration(property.InitialValue));

@@ -31,6 +31,7 @@ namespace NetLibraryGenerator.Utilities
             @namespace.Imports.Add(new CodeNamespaceImport($"System.Runtime.InteropServices"));
             @namespace.Imports.Add(new CodeNamespaceImport($"Newtonsoft.Json"));
             @namespace.Imports.Add(new CodeNamespaceImport($"Ardalis.SmartEnum.JsonNet"));
+            @namespace.Imports.Add(new CodeNamespaceImport($"Prism.Mvvm"));
         }
 
         public static void AddImportsForCategoryAbstraction(this CodeNamespace @namespace)

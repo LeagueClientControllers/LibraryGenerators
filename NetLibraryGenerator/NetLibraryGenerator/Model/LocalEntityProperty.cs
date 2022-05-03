@@ -11,12 +11,14 @@ namespace NetLibraryGenerator.Model
         public string SchemePropertyName  { get; set; }
         public CodeTypeReference Type     { get; set; }
         public JsDocumentationNode[] Docs { get; set; }
+        public bool Modifiable { get; set; }
 
         public LocalEntityProperty(CodeTypeReference reference, ApiEntityProperty property)
         {
             SchemePropertyName = property.Name;
-            Nullable = property.Type.Nullable;
             InitialValue = property.InitialValue;
+            Modifiable = property.Modifiable;
+            Nullable = property.Type.Nullable;
             Docs = property.Docs;
             Type = reference;
         }

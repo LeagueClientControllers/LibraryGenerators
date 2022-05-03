@@ -64,11 +64,8 @@ namespace NetLibraryGenerator.Core
 
         private static string ModifyAbstraction(string content, SyntaxTree abstraction, List<LocalCategory> categories)
         {
-            Console.WriteLine($"[content] = {content}");
             List<string> tabularContent = content.Split("\r\n").ToList();
-            Console.WriteLine(String.Join("\r\n", tabularContent));
             Region categoriesRegion = ExtractRegions(abstraction.ExtractType(Config.CORE_LIBRARY_ABSTRACTION_TYPE)).First();
-            Console.WriteLine($"[categoriesRegion.StartLineIndex] = {categoriesRegion.StartLineIndex}, [categoriesRegion.EndLineIndex] = {categoriesRegion.EndLineIndex}");
             tabularContent.RemoveRange(new Range(categoriesRegion.StartLineIndex + 1, categoriesRegion.EndLineIndex - 1));
             ConsoleUtils.ShowInfo("|--Categories section is found");
 
