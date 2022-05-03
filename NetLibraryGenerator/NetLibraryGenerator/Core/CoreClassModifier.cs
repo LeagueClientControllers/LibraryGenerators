@@ -1,7 +1,7 @@
 ﻿using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Diagnostics.CodeAnalysis;
-
+using System.Threading.Channels;
 using ICSharpCode.NRefactory.CSharp;
 
 using NetLibraryGenerator.Model;
@@ -66,6 +66,7 @@ namespace NetLibraryGenerator.Core
         {
             List<string> tabularContent = content.Split("\r\n").ToList();
             Region categoriesRegion = ExtractRegions(abstraction.ExtractType(Config.CORE_LIBRARY_ABSTRACTION_TYPE)).First();
+            Console.WriteLine($"[categoriesRegion.StartLineIndex] = {categoriesRegion.StartLineIndex}, [categoriesRegion.EndLineIndex] = {categoriesRegion.EndLineIndex}");
             tabularContent.RemoveRange(new Range(categoriesRegion.StartLineIndex + 1, categoriesRegion.EndLineIndex - 1));
             ConsoleUtils.ShowInfo("|--Categories section is found");
 
