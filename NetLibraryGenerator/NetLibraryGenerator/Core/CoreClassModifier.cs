@@ -31,7 +31,7 @@ namespace NetLibraryGenerator.Core
             using (StreamReader reader = new StreamReader(new FileStream(coreAbstractionPath, FileMode.Open, FileAccess.Read))) {
                 coreAbstractionContent = await reader.ReadToEndAsync();
                 coreAbstraction = Generator.CodeParser.Parse(coreAbstractionContent);
-                coreAbstractionContent = coreAbstractionPath.ReplaceLineEndings("\r\n");
+                coreAbstractionContent = coreAbstractionContent.ReplaceLineEndings("\r\n");
             }
             
             ConsoleUtils.ShowInfo("Core abstraction is parsed");
