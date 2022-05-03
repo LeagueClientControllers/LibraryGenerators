@@ -87,93 +87,6 @@
           "buildTransitive/net6.0/_._": {}
         }
       }
-    },
-    "net6.0/ubuntu.20.04-x64": {
-      "Ardalis.SmartEnum/2.1.0": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/Ardalis.SmartEnum.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Ardalis.SmartEnum.dll": {}
-        }
-      },
-      "Ardalis.SmartEnum.JsonNet/2.1.0": {
-        "type": "package",
-        "dependencies": {
-          "Ardalis.SmartEnum": "2.1.0",
-          "Newtonsoft.Json": "13.0.1"
-        },
-        "compile": {
-          "lib/netstandard2.0/Ardalis.SmartEnum.JsonNet.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Ardalis.SmartEnum.JsonNet.dll": {}
-        }
-      },
-      "CommandLineParser/2.8.0": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/CommandLine.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/CommandLine.dll": {}
-        }
-      },
-      "ICSharpCode.NRefactory/5.5.1": {
-        "type": "package",
-        "dependencies": {
-          "Mono.Cecil": "0.9.5.4"
-        },
-        "compile": {
-          "lib/Net40/ICSharpCode.NRefactory.CSharp.dll": {},
-          "lib/Net40/ICSharpCode.NRefactory.Cecil.dll": {},
-          "lib/Net40/ICSharpCode.NRefactory.Xml.dll": {},
-          "lib/Net40/ICSharpCode.NRefactory.dll": {}
-        },
-        "runtime": {
-          "lib/Net40/ICSharpCode.NRefactory.CSharp.dll": {},
-          "lib/Net40/ICSharpCode.NRefactory.Cecil.dll": {},
-          "lib/Net40/ICSharpCode.NRefactory.Xml.dll": {},
-          "lib/Net40/ICSharpCode.NRefactory.dll": {}
-        }
-      },
-      "Mono.Cecil/0.9.5.4": {
-        "type": "package",
-        "compile": {
-          "lib/net40/Mono.Cecil.Mdb.dll": {},
-          "lib/net40/Mono.Cecil.Pdb.dll": {},
-          "lib/net40/Mono.Cecil.Rocks.dll": {},
-          "lib/net40/Mono.Cecil.dll": {}
-        },
-        "runtime": {
-          "lib/net40/Mono.Cecil.Mdb.dll": {},
-          "lib/net40/Mono.Cecil.Pdb.dll": {},
-          "lib/net40/Mono.Cecil.Rocks.dll": {},
-          "lib/net40/Mono.Cecil.dll": {}
-        }
-      },
-      "Newtonsoft.Json/13.0.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
-        }
-      },
-      "System.CodeDom/7.0.0-preview.3.22175.4": {
-        "type": "package",
-        "compile": {
-          "lib/net6.0/System.CodeDom.dll": {}
-        },
-        "runtime": {
-          "lib/net6.0/System.CodeDom.dll": {}
-        },
-        "build": {
-          "buildTransitive/net6.0/_._": {}
-        }
-      }
     }
   },
   "libraries": {
@@ -338,23 +251,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Lauriero\\.nuget\\packages\\": {},
+    "C:\\Users\\thuje\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.1",
     "restore": {
-      "projectUniqueName": "D:\\Development\\GitHub\\LARC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\NetLibraryGenerator.csproj",
+      "projectUniqueName": "C:\\Development\\LCC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\NetLibraryGenerator.csproj",
       "projectName": "NetLibraryGenerator",
-      "projectPath": "D:\\Development\\GitHub\\LARC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\NetLibraryGenerator.csproj",
-      "packagesPath": "C:\\Users\\Lauriero\\.nuget\\packages\\",
-      "outputPath": "D:\\Development\\GitHub\\LARC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\obj\\",
+      "projectPath": "C:\\Development\\LCC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\NetLibraryGenerator.csproj",
+      "packagesPath": "C:\\Users\\thuje\\.nuget\\packages\\",
+      "outputPath": "C:\\Development\\LCC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Lauriero\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\thuje\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -416,31 +329,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Runtime.linux-x64",
-            "version": "[6.0.1, 6.0.1]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.linux-x64",
-            "version": "[6.0.1, 6.0.1]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Runtime.linux-x64",
-            "version": "[6.0.1, 6.0.1]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
-      }
-    },
-    "runtimes": {
-      "ubuntu.20.04-x64": {
-        "#import": []
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
       }
     }
   },
@@ -449,7 +343,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"ICSharpCode.NRefactory 5.5.1\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\", а не целевой платформы проекта \"net6.0\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'ICSharpCode.NRefactory 5.5.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
       "libraryId": "ICSharpCode.NRefactory",
       "targetGraphs": [
         "net6.0"
@@ -459,7 +353,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"Mono.Cecil 0.9.5.4\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\", а не целевой платформы проекта \"net6.0\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'Mono.Cecil 0.9.5.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
       "libraryId": "Mono.Cecil",
       "targetGraphs": [
         "net6.0"

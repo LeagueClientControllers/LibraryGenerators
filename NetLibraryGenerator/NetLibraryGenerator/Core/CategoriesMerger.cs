@@ -165,6 +165,8 @@ namespace NetLibraryGenerator.Core
                 List<string> oldMethodBody = new();
                 oldMethodBody.AddRange(oldMethod.Body.ToString().Split("\r\n")
                     .Select(s => string.IsNullOrWhiteSpace(s) ? "" : $"        {s}").Take(..^1));
+                
+                Console.WriteLine(string.Join("\r\n", oldMethodBody));
 
                 tabularNewContent[newMethod.Body.StartLocation.Line - 1 + linesOffset] = 
                     tabularNewContent[newMethod.Body.StartLocation.Line - 1 + linesOffset][..(newMethod.Body.StartLocation.Column - 1)];
