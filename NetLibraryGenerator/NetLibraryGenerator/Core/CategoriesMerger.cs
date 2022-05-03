@@ -24,14 +24,12 @@ namespace NetLibraryGenerator.Core
             SyntaxTree oldAbstraction;
             using (StreamReader reader = new StreamReader(new FileStream(oldAbstractionPath, FileMode.Open, FileAccess.Read))) {
                 string oldAbstractionContent = reader.ReadToEnd();
-                oldAbstractionContent = oldAbstractionContent.ReplaceLineEndings("\r\n");
                 oldAbstraction = Generator.CodeParser.Parse(oldAbstractionContent);
             }
 
             SyntaxTree oldImplementation;
             using (StreamReader reader = new StreamReader(new FileStream(oldImplementationPath, FileMode.Open, FileAccess.Read))) {
                 string oldImplementationContent = reader.ReadToEnd();
-                oldImplementationContent = oldImplementationContent.ReplaceLineEndings("\r\n");
                 oldImplementation = Generator.CodeParser.Parse(oldImplementationContent);
             }
 
@@ -165,7 +163,7 @@ namespace NetLibraryGenerator.Core
             int linesOffset = 0;
             foreach ((MethodDeclaration? oldMethod, MethodDeclaration? newMethod) in methods) {
                 List<string> oldMethodBody = new();
-                oldMethodBody.AddRange(oldMethod.Body.ToString().Split("\r\n")
+                oldMethodBody.AddRange(oldMethod.Body.ToString().ReplaceLineEndings("\r\n").Split("\r\n")
                     .Select(s => string.IsNullOrWhiteSpace(s) ? "" : $"        {s}").Take(..^1));
                 
                 Console.WriteLine(oldMethod.Body.ToString().Count(c => c == '\r'));
