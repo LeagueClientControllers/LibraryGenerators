@@ -166,6 +166,8 @@ namespace NetLibraryGenerator.Core
                 oldMethodBody.AddRange(oldMethod.Body.ToString().Split("\r\n")
                     .Select(s => string.IsNullOrWhiteSpace(s) ? "" : $"        {s}").Take(..^1));
                 
+                Console.WriteLine(oldMethod.Body.ToString().Count(c => c == '\r'));
+                Console.WriteLine(oldMethod.Body.ToString().Count(c => c == '\n'));
                 Console.WriteLine(oldMethod.Body.ToString());
 
                 tabularNewContent[newMethod.Body.StartLocation.Line - 1 + linesOffset] = 
