@@ -24,12 +24,14 @@ namespace NetLibraryGenerator.Core
             SyntaxTree oldAbstraction;
             using (StreamReader reader = new StreamReader(new FileStream(oldAbstractionPath, FileMode.Open, FileAccess.Read))) {
                 string oldAbstractionContent = reader.ReadToEnd();
+                oldAbstractionContent = oldAbstractionContent.ReplaceLineEndings("\r\n");
                 oldAbstraction = Generator.CodeParser.Parse(oldAbstractionContent);
             }
 
             SyntaxTree oldImplementation;
             using (StreamReader reader = new StreamReader(new FileStream(oldImplementationPath, FileMode.Open, FileAccess.Read))) {
                 string oldImplementationContent = reader.ReadToEnd();
+                oldImplementationContent = oldImplementationContent.ReplaceLineEndings("\r\n");
                 oldImplementation = Generator.CodeParser.Parse(oldImplementationContent);
             }
 
