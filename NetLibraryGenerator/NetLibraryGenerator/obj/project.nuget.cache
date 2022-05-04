@@ -1,55 +1,24 @@
 {
   "version": 2,
-  "dgSpecHash": "2p5K35LsIS4W1n/kqCOai322mIa6R5PPjWHJAmuS9gRDOyvq/nRFxkRqBqXklSaLBIU50IEi39JssmBFAsrGUQ==",
+  "dgSpecHash": "CRxMFDrjolHnKVDCP2XurK/pEZ9x4ColtI9hUuvFfpiVr9l8BiAREuoqqMtyzg78KkZnook+ceYQqKwVzGn/hQ==",
   "success": true,
   "projectFilePath": "C:\\Development\\LCC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\NetLibraryGenerator.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\thuje\\.nuget\\packages\\ardalis.smartenum\\2.1.0\\ardalis.smartenum.2.1.0.nupkg.sha512",
     "C:\\Users\\thuje\\.nuget\\packages\\ardalis.smartenum.jsonnet\\2.1.0\\ardalis.smartenum.jsonnet.2.1.0.nupkg.sha512",
+    "C:\\Users\\thuje\\.nuget\\packages\\commandlineparser\\2.8.0\\commandlineparser.2.8.0.nupkg.sha512",
     "C:\\Users\\thuje\\.nuget\\packages\\icsharpcode.nrefactory\\5.5.1\\icsharpcode.nrefactory.5.5.1.nupkg.sha512",
-    "C:\\Users\\thuje\\.nuget\\packages\\jetbrains.icsharpcode.nrefactory\\5.5.1\\jetbrains.icsharpcode.nrefactory.5.5.1.nupkg.sha512",
-    "C:\\Users\\thuje\\.nuget\\packages\\jetbrains.mono.cecil\\0.9.6.1\\jetbrains.mono.cecil.0.9.6.1.nupkg.sha512",
     "C:\\Users\\thuje\\.nuget\\packages\\mono.cecil\\0.9.5.4\\mono.cecil.0.9.5.4.nupkg.sha512",
     "C:\\Users\\thuje\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
     "C:\\Users\\thuje\\.nuget\\packages\\system.codedom\\7.0.0-preview.3.22175.4\\system.codedom.7.0.0-preview.3.22175.4.nupkg.sha512"
   ],
   "logs": [
     {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "JetBrains.ICSharpCode.NRefactory 5.5.1 depends on JetBrains.Mono.Cecil (>= 0.9.5.4) but JetBrains.Mono.Cecil 0.9.5.4 was not found. An approximate best match of JetBrains.Mono.Cecil 0.9.6.1 was resolved.",
-      "libraryId": "JetBrains.Mono.Cecil",
-      "targetGraphs": [
-        "net6.0"
-      ]
-    },
-    {
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
       "message": "Package 'ICSharpCode.NRefactory 5.5.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
       "libraryId": "ICSharpCode.NRefactory",
-      "targetGraphs": [
-        "net6.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'JetBrains.ICSharpCode.NRefactory 5.5.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
-      "libraryId": "JetBrains.ICSharpCode.NRefactory",
-      "targetGraphs": [
-        "net6.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'JetBrains.Mono.Cecil 0.9.6.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
-      "libraryId": "JetBrains.Mono.Cecil",
       "targetGraphs": [
         "net6.0"
       ]

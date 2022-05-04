@@ -5,7 +5,7 @@
   },
   "projects": {
     "C:\\Development\\LCC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\NetLibraryGenerator.csproj": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "restore": {
         "projectUniqueName": "C:\\Development\\LCC\\LibraryGenerators\\NetLibraryGenerator\\NetLibraryGenerator\\NetLibraryGenerator.csproj",
         "projectName": "NetLibraryGenerator",
@@ -52,11 +52,11 @@
               "target": "Package",
               "version": "[2.1.0, )"
             },
-            "ICSharpCode.NRefactory": {
+            "CommandLineParser": {
               "target": "Package",
-              "version": "[5.5.1, )"
+              "version": "[2.8.0, )"
             },
-            "JetBrains.ICSharpCode.NRefactory": {
+            "ICSharpCode.NRefactory": {
               "target": "Package",
               "version": "[5.5.1, )"
             },

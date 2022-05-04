@@ -135,10 +135,14 @@ namespace NetLibraryGenerator.Core
                 CodeTypeReference propertyType = property.Type.ToTypeReference(allDeclarations);
                 
                 if (property.Modifiable) {
+                    //
                     CodeMemberField @private = new CodeMemberField(propertyType, $"_{property.Name}") {
                         Attributes = MemberAttributes.Private | MemberAttributes.Final
                     };
-
+                    if (!property.Type.Nullable && property.InitialValue is null) {
+                        @private.Name += " = default!";
+                    }
+                    
                     CodeMemberProperty modifiableEntityProperty = new CodeMemberProperty() {
                         Name = propertyName,
                         Attributes = MemberAttributes.Public | MemberAttributes.Final,
