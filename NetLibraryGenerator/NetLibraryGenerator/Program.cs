@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 
 using CommandLine;
-
+using Mono.CSharp;
 using NetLibraryGenerator.Core;
 using NetLibraryGenerator.Model;
 using NetLibraryGenerator.SchemeModel;
@@ -43,7 +43,9 @@ namespace NetLibraryGenerator
                 .Replace(options.ApiSchemePath, "");
             options.LibraryPath = new Regex("(\'|\")")
                 .Replace(options.LibraryPath, "");
-
+            options.JsonOutputPath = new Regex("(\'|\")")
+                .Replace(options.JsonOutputPath, "");
+            
             if (!File.Exists(options.ApiSchemePath)) {
                 throw new ArgumentException(
                     "API scheme path should be valid path to an existing file.");
@@ -52,6 +54,15 @@ namespace NetLibraryGenerator
             if (!Directory.Exists(options.LibraryPath)) {
                 throw new ArgumentException(
                     "Library path should be valid path to an existing directory.");
+            }
+
+            if (!Directory.Exists(Path.GetDirectoryName(options.JsonOutputPath))) {
+                throw new ArgumentException(
+                    "Json output directory should be valid path to an existing directory.");
+            }
+
+            if (!Path.GetExtension(options.JsonOutputPath).Contains("json")) {
+                throw new ArgumentException("Output file must have .json extension");
             }
             
             ConsoleUtils.ShowInfo("Parsing scheme...");
@@ -88,7 +99,12 @@ namespace NetLibraryGenerator
 
             GenerationResults results = await Generator.GenerateLibrary(options.LibraryPath, _scheme);
             Console.WriteLine();
-            Console.WriteLine($"Generation results: {JsonConvert.SerializeObject(results)}");
+            Console.WriteLine($"Result file generate at [{options.JsonOutputPath}]");
+            
+            await using (StreamWriter writer = new StreamWriter(new FileStream(options.JsonOutputPath, FileMode.Create))) {
+                await writer.WriteAsync(JsonConvert.SerializeObject(results));
+            }
+            
             
             Console.ForegroundColor = ConsoleColor.White;
         }

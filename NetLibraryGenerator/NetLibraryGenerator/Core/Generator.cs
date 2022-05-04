@@ -21,7 +21,7 @@ namespace NetLibraryGenerator.Core
         {
             ConsoleUtils.ShowInfo("Transforming declarations to local...");
 
-            List<LocalEntityDeclaration> localDeclarations = new();
+            List<LocalEntityDeclaration> localDeclarations = new List<LocalEntityDeclaration>();
             foreach (ApiEntityDeclaration declaration in scheme.Model.Declarations) {
                 localDeclarations.Add(new LocalEntityDeclaration(declaration));
             }
@@ -41,6 +41,7 @@ namespace NetLibraryGenerator.Core
                     results.ChangedMethods.Add(new ChangedMethod(localCategory.InitialCategory.Name, method));
                 }
             }
+            
 
             return results;
         }

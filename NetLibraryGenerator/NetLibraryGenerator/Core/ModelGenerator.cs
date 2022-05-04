@@ -135,7 +135,6 @@ namespace NetLibraryGenerator.Core
                 CodeTypeReference propertyType = property.Type.ToTypeReference(allDeclarations);
                 
                 if (property.Modifiable) {
-                    //
                     CodeMemberField @private = new CodeMemberField(propertyType, $"_{property.Name}") {
                         Attributes = MemberAttributes.Private | MemberAttributes.Final
                     };
