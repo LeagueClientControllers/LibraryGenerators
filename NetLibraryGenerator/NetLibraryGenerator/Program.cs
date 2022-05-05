@@ -1,10 +1,10 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 using CommandLine;
-using Mono.CSharp;
+
 using NetLibraryGenerator.Core;
 using NetLibraryGenerator.Model;
+using NetLibraryGenerator.Model.Results;
 using NetLibraryGenerator.SchemeModel;
 using NetLibraryGenerator.Utilities;
 
@@ -21,7 +21,6 @@ namespace NetLibraryGenerator
         private static async Task Main(string[] args)
         {
             Console.ForegroundColor = ConsoleUtils.DEFAULT_COLOR;
-            Console.WriteLine($"This application was executed from '{Environment.CurrentDirectory}'");
             
             try {
                 await Parser.Default.ParseArguments<CommandLineOptions>(args).MapResult(Run,
@@ -30,9 +29,9 @@ namespace NetLibraryGenerator
                         return Task.FromResult(-1);
                     });
             } catch (GeneratorException e) {
-                ConsoleUtils.ShowError($"Error while generating library: {e.Message}");
+                ConsoleUtils.ShowError(e.ToString());
             } catch (Exception e) {
-                ConsoleUtils.ShowError($"Fatal exception occured. '{e.GetType()}: {e.Message}' " +
+                ConsoleUtils.ShowError($"{e.GetType()}: {e.Message} Occured " +
                                        $"{e.StackTrace?.Split("\r\n").FirstOrDefault()?.Replace("   ", "")}");
             }
         }
@@ -97,15 +96,14 @@ namespace NetLibraryGenerator
             ShowHeader();
             Console.WriteLine();
 
-            GenerationResults results = await Generator.GenerateLibrary(options.LibraryPath, _scheme);
+            await Generator.GenerateLibrary(options.LibraryPath, _scheme);
             Console.WriteLine();
-            Console.WriteLine($"Result file generate at [{options.JsonOutputPath}]");
             
             await using (StreamWriter writer = new StreamWriter(new FileStream(options.JsonOutputPath, FileMode.Create))) {
-                await writer.WriteAsync(JsonConvert.SerializeObject(results));
+                await writer.WriteAsync(JsonConvert.SerializeObject(GenerationResults.Instance));
             }
             
-            
+            ConsoleUtils.ShowInfo($"Results file is generated at [{options.JsonOutputPath}]");
             Console.ForegroundColor = ConsoleColor.White;
         }
 

@@ -5,8 +5,8 @@ using NetLibraryGenerator.Utilities;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Metadata;
-using ICSharpCode.NRefactory.CSharp;
+
+using NetLibraryGenerator.Model.Results;
 
 namespace NetLibraryGenerator.Core
 {
@@ -33,8 +33,8 @@ namespace NetLibraryGenerator.Core
             foreach (FileInfo file in modelDirectory.EnumerateFiles()) {
                 File.Delete(file.FullName);
             }
+            
             ConsoleUtils.ShowInfo("Old model is cleared");
-
             foreach (KeyValuePair<string, LocalModelEntity> graph in graphs) {
                 string outputPath = Path.Combine(libraryPath, graph.Key);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
@@ -48,25 +48,32 @@ namespace NetLibraryGenerator.Core
                     await writer.WriteLineAsync("#nullable restore");
                 }
             }
+            
             ConsoleUtils.ShowInfo("New code is generated and inserted into library");
 
             LocalModel model = new LocalModel();
             foreach (LocalEntityDeclaration declaration in modelDeclarations) {
                 foreach (LocalModelEntity entity in graphs.Values) {
                     if (entity.Declaration == declaration) {
+                        GenerationResults.Instance.ModelEntitiesCount++;
                         if (declaration.Kind == ApiEntityKind.Parameters) {
                             model.Parameters.Add(entity);
+                            GenerationResults.Instance.ModelParametersCount++;
                         } else if (declaration.Kind == ApiEntityKind.Response) {
                             model.Responses.Add(entity);
+                            GenerationResults.Instance.ModelResponsesCount++;
+                        } else if (declaration.Kind == ApiEntityKind.Enum) {
+                            GenerationResults.Instance.ModelEnumsCount++;
+                        } else if (declaration.Kind == ApiEntityKind.Event) {
+                            GenerationResults.Instance.ModelEventsCount++;
                         }
 
                         break;
                     }
                 }   
             }
-            ConsoleUtils.ShowInfo("Local model info is generated");
             
-
+            ConsoleUtils.ShowInfo("Local model info is generated");
             return model;
         }
 

@@ -6,6 +6,8 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Diagnostics.CodeAnalysis;
 
+using NetLibraryGenerator.Model.Results;
+
 namespace NetLibraryGenerator.Core
 {
     [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
@@ -26,10 +28,10 @@ namespace NetLibraryGenerator.Core
             ConsoleUtils.ShowInfo("--------------------------------- Merging categories ------------------------------------");
             foreach (LocalCategory localCategory in localCategories) {
                 ConsoleUtils.ShowInfo($"{localCategory.Name}:");
-                (bool categoryFound, List<ApiMethod> changedMethods) = 
-                    CategoriesMerger.MergeCategory(libraryPath, localCategory);
+                bool categoryFound = CategoriesMerger.MergeCategory(libraryPath, localCategory);
                 
                 if (!categoryFound) {
+                    GenerationResults.Instance.AddedCategories.Add(localCategory.InitialCategory.Name);
                     ConsoleUtils.ShowWarning($"|—-Old implementation of {localCategory.Name} is not found");
                     string abstractionPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, Config.CATEGORIES_ABSTRACTION_FOLDER_NAME, $"I{localCategory.Name}.cs");
                     string implementationPath = Path.Combine(libraryPath, Config.CATEGORIES_FOLDER_NAME, $"{localCategory.Name}.cs");
@@ -45,8 +47,6 @@ namespace NetLibraryGenerator.Core
                         Generator.CodeProvider.GenerateCodeFromCompileUnit(localCategory.Implementation, writer, new CodeGeneratorOptions());
                     }
                     ConsoleUtils.ShowInfo($"|—-New implementation is written");
-                } else {
-                    localCategory.ChangedMethods.AddRange(changedMethods.Select(m => m.Name));
                 }
             }
 

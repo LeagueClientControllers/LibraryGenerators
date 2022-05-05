@@ -1,7 +1,7 @@
 ﻿using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Channels;
+
 using ICSharpCode.NRefactory.CSharp;
 
 using NetLibraryGenerator.Model;

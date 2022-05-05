@@ -8,8 +8,6 @@ using Microsoft.CSharp;
 
 using System.CodeDom.Compiler;
 
-using Newtonsoft.Json;
-
 namespace NetLibraryGenerator.Core
 {
     public static class Generator
@@ -17,7 +15,7 @@ namespace NetLibraryGenerator.Core
         public static readonly CSharpParser CodeParser = new CSharpParser();
         public static readonly CodeDomProvider CodeProvider = new CSharpCodeProvider(); 
 
-        public static async Task<GenerationResults> GenerateLibrary(string libraryPath, ApiScheme scheme)
+        public static async Task GenerateLibrary(string libraryPath, ApiScheme scheme)
         {
             ConsoleUtils.ShowInfo("Transforming declarations to local...");
 
@@ -34,16 +32,6 @@ namespace NetLibraryGenerator.Core
             
             await CoreClassModifier.CorrectCore(libraryPath, newCategories);
             await EventsGenerator.GenerateEventSystem(libraryPath, localDeclarations);
-
-            GenerationResults results = new GenerationResults();
-            foreach (LocalCategory localCategory in newCategories) {
-                foreach (string method in localCategory.ChangedMethods) {
-                    results.ChangedMethods.Add(new ChangedMethod(localCategory.InitialCategory.Name, method));
-                }
-            }
-            
-
-            return results;
         }
     }
 }

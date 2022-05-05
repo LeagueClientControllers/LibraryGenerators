@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
-namespace NetLibraryGenerator.Model;
+namespace NetLibraryGenerator.Model.Results;
 
-public class ChangedMethod
+public class AddedMethod
 {
-    public ChangedMethod(string category, string name)
+    public AddedMethod(string category, string name)
     {
         Category = category;
         Name = name;
