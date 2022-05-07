@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:path/path.dart' as path;
-import 'package:pub_semver/pub_semver.dart';
 import 'package:recase/recase.dart';
 
 import '../model/local_category.dart';
+import '../model/results/added_method.dart';
+import '../model/results/changed_method.dart';
+import '../model/results/generation_results.dart';
 import '../model/syntactic_method.dart';
 import '../scheme_model/api_category.dart';
 import '../scheme_model/api_method.dart';
@@ -52,8 +53,8 @@ FutureOr<bool> mergeCategory(String libraryPath, LocalCategory category, ApiCate
   ConsoleUtilities.info("|--New implementation is parsed");
 
   ConsoleUtilities.info("|--Parsing abstraction methods...");
-  List<SyntacticMethod> abstractionMethods = _findMethods("I${category.name}", oldAbstraction, newAbstraction, apiCategory.methods);
-  List<ApiMethod> changedMethods = _checkAbstractionMethods(oldAbstractionContent, generatedAbstraction, oldAbstraction, newAbstraction, abstractionMethods);
+  List<SyntacticMethod> abstractionMethods = _findMethods("I${category.name}", oldAbstraction, newAbstraction, apiCategory.methods, category);
+  List<ApiMethod> changedMethods = _checkAbstractionMethods(oldAbstractionContent, generatedAbstraction, oldAbstraction, newAbstraction, abstractionMethods, category);
 
   ConsoleUtilities.info("|--Parsing implementation methods...");
   List<SyntacticMethod> implementationMethods = _findMethods(category.name, oldImplementation, newImplementation, apiCategory.methods);
@@ -68,7 +69,8 @@ FutureOr<bool> mergeCategory(String libraryPath, LocalCategory category, ApiCate
   return true;
 }
 
-List<SyntacticMethod> _findMethods(String className, CompilationUnit oldUnit, CompilationUnit newUnit, List<ApiMethod> methods) {
+List<SyntacticMethod> _findMethods(String className, CompilationUnit oldUnit, CompilationUnit newUnit, 
+    List<ApiMethod> methods, [LocalCategory? category]) {
   List<MethodDeclaration> oldAbstractionMethods = extractMethods(oldUnit, className); 
   List<MethodDeclaration> newAbstractionMethods = extractMethods(newUnit, className); 
 
@@ -94,6 +96,9 @@ List<SyntacticMethod> _findMethods(String className, CompilationUnit oldUnit, Co
     }
 
     if (oldMethod == null) {
+      if (category != null) { 
+        GenerationResults.addedMethods.add(new AddedMethod(category: category.initialName, name: apiMethod.name));
+      }
       continue;
     }
 
@@ -105,11 +110,15 @@ List<SyntacticMethod> _findMethods(String className, CompilationUnit oldUnit, Co
   return result;
 }
 
-List<ApiMethod> _checkAbstractionMethods(String oldAbstractionContent, String newAbstractionContent, CompilationUnit oldAbstraction, CompilationUnit newAbstraction, List<SyntacticMethod> methods) {
+List<ApiMethod> _checkAbstractionMethods(String oldAbstractionContent, String newAbstractionContent, 
+    CompilationUnit oldAbstraction, CompilationUnit newAbstraction, List<SyntacticMethod> methods, 
+    LocalCategory category) {
   List<ApiMethod> changedMethods = [];
   for (SyntacticMethod method in methods) {
-    String oldMethodSyntax = oldAbstractionContent.substring(method.oldMethod.firstTokenAfterCommentAndMetadata.offset, method.oldMethod.end);
-    String newMethodSyntax = newAbstractionContent.substring(method.newMethod.firstTokenAfterCommentAndMetadata.offset, method.newMethod.end);
+    String oldMethodSyntax = oldAbstractionContent.substring(
+      method.oldMethod.firstTokenAfterCommentAndMetadata.offset, method.oldMethod.end);
+    String newMethodSyntax = newAbstractionContent.substring(
+      method.newMethod.firstTokenAfterCommentAndMetadata.offset, method.newMethod.end);
 
     if (oldMethodSyntax.replaceAll(" ", "") == newMethodSyntax.replaceAll(" ", "")) {
       ConsoleUtilities.info("|--Abstract method '${method.apiMethod.name}' already has correct structure");
@@ -117,18 +126,24 @@ List<ApiMethod> _checkAbstractionMethods(String oldAbstractionContent, String ne
     }
 
     changedMethods.add(method.apiMethod);
+    GenerationResults.changedMethods.add(new ChangedMethod(name: method.apiMethod.name, 
+        category: category.initialName, oldSignature: oldMethodSyntax, newSignature: newMethodSyntax));
     ConsoleUtilities.info("|--Abstract method '${method.apiMethod.name}' signature has been changed");
   }
 
   return changedMethods;
 }
 
-String _mergeImplementationMethods(String oldImplementationContent, String newImplementationContent, CompilationUnit oldImplementation, CompilationUnit newImplementation, List<SyntacticMethod> methods, List<ApiMethod> changedMethods) {
+String _mergeImplementationMethods(String oldImplementationContent, String newImplementationContent, 
+    CompilationUnit oldImplementation, CompilationUnit newImplementation, List<SyntacticMethod> methods, 
+    List<ApiMethod> changedMethods) {
   int offset = 0;
   String mergedImplementationContent = newImplementationContent;
   for (SyntacticMethod method in methods) {
-    String oldMethodBody = oldImplementationContent.substring(method.oldMethod.body.offset, method.oldMethod.body.end);
-    String newMethodBody = newImplementationContent.substring(method.newMethod.body.offset, method.newMethod.body.end);
+    String oldMethodBody = oldImplementationContent.substring(
+      method.oldMethod.body.offset, method.oldMethod.body.end);
+    String newMethodBody = newImplementationContent.substring(
+      method.newMethod.body.offset, method.newMethod.body.end);
 
     if (oldMethodBody.replaceAll(" ", "") == newMethodBody.replaceAll(" ", "")) {
       ConsoleUtilities.info("|--Method '${method.apiMethod.name}' hasn't been changed");
@@ -140,8 +155,8 @@ String _mergeImplementationMethods(String oldImplementationContent, String newIm
 
     for (ApiMethod changedMethod in changedMethods) {
       if (changedMethod.name == method.apiMethod.name) {
-        mergedImplementationContent = mergedImplementationContent.replaceRange(method.newMethod.beginToken.offset + offset, 
-            method.newMethod.beginToken.offset + offset, "  // TODO: Needs revision due to a new method signature\r\n");
+        mergedImplementationContent = mergedImplementationContent.replaceRange(method.newMethod.sortedCommentAndAnnotations.last.end + offset + 1, 
+            method.newMethod.sortedCommentAndAnnotations.last.end + offset + 1, "\r\n  // TODO: Needs revision due to a new method signature\r\n");
         offset += 57;
         break;
       }

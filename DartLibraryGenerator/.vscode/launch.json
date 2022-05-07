@@ -9,6 +9,11 @@
             "request": "launch",
             "type": "dart",
             "program": "bin/dart_library_generator.dart",
+            "args": [ 
+                "-s ../../WebServer/schemes/api-scheme_1.3.0.json", 
+                "-l ../../LarcApiDart/",
+                "-o ./results.json" 
+            ],
             "cwd": "${workspaceFolder}"
         }
     ]

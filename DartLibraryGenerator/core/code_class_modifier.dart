@@ -35,12 +35,12 @@ FutureOr modifyCore(String libraryPath, List<ApiCategory> categories) async {
   ConsoleUtilities.info("Core implementation is parsed");
 
 
-  ConsoleUtilities.info("|Abstraction:");
+  ConsoleUtilities.info("Abstraction:");
   String modifiedAbstractionContent = _modifyCoreAbstraction(abstractionFileContent, abstraction, categories);
   await abstractionFile.writeAsString(modifiedAbstractionContent);
   ConsoleUtilities.info("|--Modified code is written");
 
-  ConsoleUtilities.info("|Implementation:");
+  ConsoleUtilities.info("Implementation:");
   String modifiedImplementationContent = _modifyCoreImplementation(implementationFileContent, implementation, categories);
   await implementationFile.writeAsString(modifiedImplementationContent);
   ConsoleUtilities.info("|--Modified code is written");

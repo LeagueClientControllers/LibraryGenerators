@@ -184,10 +184,7 @@ namespace NetLibraryGenerator.Core
                 tabularNewContent.InsertRange(newMethod.Body.StartLocation.Line + linesOffset, oldMethodBody);
 
                 if (changedMethods.Any(m =>
-                        $"{m.Name.CaseTransform(Case.CamelCase, Case.PascalCase)}Async" == newMethod.Name) &&
-                    !tabularNewContent[newMethod.StartLocation.Line + linesOffset].Contains(
-                        "TODO: Needs revision due to a signature changes.")) {
-
+                        $"{m.Name.CaseTransform(Case.CamelCase, Case.PascalCase)}Async" == newMethod.Name)) {
                     tabularNewContent.Insert(newMethod.StartLocation.Line + linesOffset,
                         "        /// TODO: Needs revision due to a signature changes.");
                     linesOffset++;

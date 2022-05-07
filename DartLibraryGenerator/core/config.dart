@@ -1,4 +1,4 @@
-const String SUPPORTED_SCHEME_VERSION = "1.0.0";
+const String SUPPORTED_SCHEME_VERSION = "1.1.0";
 
 const String LIBRARY_PACKAGE_NAME = "larc_api_dart"; 
 const String API_RESPONSE_MODEL_NAME = "ApiResponse";

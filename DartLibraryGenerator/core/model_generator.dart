@@ -10,6 +10,7 @@ import '../model/local_entity_declaration.dart';
 import '../model/local_entity_property.dart';
 import '../model/local_model.dart';
 import '../model/local_model_entity.dart';
+import '../model/results/generation_results.dart';
 import '../scheme_model/api_entity.dart';
 import '../scheme_model/api_entity_declaration.dart';
 import '../scheme_model/api_entity_property.dart';
@@ -53,6 +54,13 @@ FutureOr<LocalModel> generateModel(String libraryPath, ApiModel model, List<Loca
   LocalModel localModel = new LocalModel();
   for (ApiEntity entity in model.entities) {
     LocalEntityDeclaration declaration = modelDeclarations[entity.id - 1];
+    if (declaration.kind == ApiEntityKind.Event) {
+      GenerationResults.modelEventsCount++;
+    } else if (declaration.kind == ApiEntityKind.Parameters) {
+      GenerationResults.modelParametersCount++;
+    } else if (declaration.kind == ApiEntityKind.Response) {
+      GenerationResults.modelResponsesCount++;
+    }
 
     ConsoleUtilities.info("${declaration.name} | ${declaration.kind.toString()} | ${declaration.localPath}:");
     LocalModelEntity modelEntity = _generateEntity(entity, modelDeclarations);
@@ -68,6 +76,7 @@ FutureOr<LocalModel> generateModel(String libraryPath, ApiModel model, List<Loca
 
     outputFile.writeAsStringSync(codeFormatter.format(entityClassContents));
     localModel.entities.add(modelEntity);
+    GenerationResults.modelEntitiesCount++;
   }
 
   for (ApiEnum entity in model.enums) {
@@ -86,6 +95,8 @@ FutureOr<LocalModel> generateModel(String libraryPath, ApiModel model, List<Loca
     }
 
     outputFile.writeAsStringSync(codeFormatter.format(entityClassContents));
+    GenerationResults.modelEntitiesCount++;
+    GenerationResults.modelEnumsCount++;
   }
 
   return localModel;
@@ -94,7 +105,8 @@ FutureOr<LocalModel> generateModel(String libraryPath, ApiModel model, List<Loca
 Library _generateExportsFile(List<LocalEntityDeclaration> modelDeclarations) {
   return Library((library) => library.directives
     ..addAll(
-      modelDeclarations.map((d) =>  Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, MODEL_FOLDER_NAME, d.localPath).replaceAll(r'\', r'/')))
+      modelDeclarations.map((d) => 
+          Directive.export(path.join(LIBRARY_SOURCE_FOLDER_NAME, MODEL_FOLDER_NAME, d.localPath).replaceAll(r'\', r'/')))
     ));
 }
 

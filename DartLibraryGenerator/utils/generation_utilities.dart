@@ -114,7 +114,7 @@ extension ImportExtension on LibraryBuilder {
   void addEventsHandlerImports() {
     directives
         ..add(Directive.import("dart:async"))
-        ..add(Directive.import("package:lcc_api_dart/src/model/local/event_message.dart"))
+        ..add(Directive.import("package:$LIBRARY_PACKAGE_NAME/$LIBRARY_SOURCE_FOLDER_NAME/$MODEL_FOLDER_NAME/local/event_message.dart"))
         ..add(Directive.import(MODEL_EXPORTS_URL));
   }
 } 

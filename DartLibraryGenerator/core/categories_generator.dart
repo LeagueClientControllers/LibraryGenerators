@@ -9,6 +9,7 @@ import '../model/local_category.dart';
 import '../model/local_entity_property.dart';
 import '../model/local_model.dart';
 import '../model/local_model_entity.dart';
+import '../model/results/generation_results.dart';
 import '../scheme_model/api_category.dart';
 import '../scheme_model/api_method.dart';
 import '../utils/console_utilities.dart';
@@ -33,11 +34,12 @@ FutureOr generateCategories(String libraryPath, List<ApiCategory> categories, Lo
     Library categoryImplementation = await _generateCategoryImplementation(categoryName, category, categoryAbstraction, model);
     ConsoleUtilities.info("|--Implementation code graph is generated");
 
-    if (await mergeCategory(libraryPath, new LocalCategory(categoryName, categoryAbstraction, categoryImplementation), category)) {
+    if (await mergeCategory(libraryPath, new LocalCategory(categoryName, category.name, categoryAbstraction, categoryImplementation), category)) {
       continue;
     }
 
     ConsoleUtilities.info("|--Old abstraction and implementation was not found");
+    GenerationResults.addedCategories.add(category.name);
 
     String abstractionContents = "${categoryAbstraction.accept(codeEmitter)}".insertGeneratedFileHeader();
     ConsoleUtilities.info("|--Abstraction file content is generated"); 

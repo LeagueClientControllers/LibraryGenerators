@@ -7,7 +7,7 @@ using NetLibraryGenerator.Model;
 using NetLibraryGenerator.Model.Results;
 using NetLibraryGenerator.SchemeModel;
 using NetLibraryGenerator.Utilities;
-
+    
 using Newtonsoft.Json;
 
 namespace NetLibraryGenerator
@@ -47,17 +47,17 @@ namespace NetLibraryGenerator
             
             if (!File.Exists(options.ApiSchemePath)) {
                 throw new ArgumentException(
-                    "API scheme path should be valid path to an existing file.");
+                    "API scheme path should be a valid path to an existing file.");
             }
             
             if (!Directory.Exists(options.LibraryPath)) {
                 throw new ArgumentException(
-                    "Library path should be valid path to an existing directory.");
+                    "Library path should be a valid path to an existing directory.");
             }
 
             if (!Directory.Exists(Path.GetDirectoryName(options.JsonOutputPath))) {
                 throw new ArgumentException(
-                    "Json output directory should be valid path to an existing directory.");
+                    "Json output directory a should be valid path to an existing directory.");
             }
 
             if (!Path.GetExtension(options.JsonOutputPath).Contains("json")) {

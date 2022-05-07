@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:analyzer/dart/analysis/features.dart';
 import 'package:code_builder/code_builder.dart';
@@ -33,19 +34,15 @@ final langFeatureSet = FeatureSet.fromEnableFlags2(
   ],
 );
 
-FutureOr generateLibrary(ApiScheme scheme) async {
+FutureOr generateLibrary(String libraryPath, ApiScheme scheme) async {
   List<LocalEntityDeclaration> modelDeclarations = 
       List.generate(scheme.model.declarations.length, (i) => LocalEntityDeclaration(scheme.model.declarations[i]));
 
-  LocalModel model = await generateModel(
-      r"D:\Development\GitHub\LARC\lcc_api_dart", scheme.model, modelDeclarations);
+  LocalModel model = await generateModel(libraryPath, scheme.model, modelDeclarations);
   
-  await generateCategories(
-      r"D:\Development\GitHub\LARC\lcc_api_dart", scheme.categories, model);
+  await generateCategories(libraryPath, scheme.categories, model);
 
-  await modifyCore(
-      r"D:\Development\GitHub\LARC\lcc_api_dart", scheme.categories);
+  await modifyCore(libraryPath, scheme.categories);
 
-  await generateEventsHandler(
-      r"D:\Development\GitHub\LARC\lcc_api_dart", model);
+  await generateEventsHandler(libraryPath, model);
 }
