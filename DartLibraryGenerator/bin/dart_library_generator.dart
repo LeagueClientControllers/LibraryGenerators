@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:collection/collection.dart';
+import 'package:darq/darq.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:path/path.dart' as path;
 
@@ -16,12 +18,17 @@ import '../utils/library_generator_exception.dart';
 Future main(List<String> args) async {
   try {
     await handledArea(args);
-  } on Exception catch (e) {
-    if (e is LibraryGeneratorException) {
-      ConsoleUtilities.error(e.toString());
-    } else {
-      ConsoleUtilities.error("Unhandled exception: ${e.toString()}");
-    }
+  } on Error catch (e) {
+    String firstStackMessage = e.stackTrace.toString()
+        .replaceAll("#0", "")
+        .replaceAll(new RegExp(r"\s+"), " ")
+        .iterableRunes
+        .takeWhile((v) => v != "#")
+        .join("");
+
+    ConsoleUtilities.error("$e Occurred at$firstStackMessage");
+  } on LibraryGeneratorException catch (e) {
+    ConsoleUtilities.error(e.toString());
   }
 }
 
@@ -43,9 +50,9 @@ FutureOr handledArea(List<String> args) async {
     return;
   }
   
-  String schemePath = arguments["scheme"].toString().substring(1);
-  String libraryPath = arguments["library"].toString().substring(1);
-  String outputPath = arguments["output"].toString().substring(1);
+  String schemePath = arguments["scheme"].toString();
+  String libraryPath = arguments["library"].toString();
+  String outputPath = arguments["output"].toString();
 
   if (arguments["help"]) { 
     printHelp();

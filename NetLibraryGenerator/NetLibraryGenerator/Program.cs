@@ -31,7 +31,7 @@ namespace NetLibraryGenerator
             } catch (GeneratorException e) {
                 ConsoleUtils.ShowError(e.ToString());
             } catch (Exception e) {
-                ConsoleUtils.ShowError($"{e.GetType()}: {e.Message} Occured " +
+                ConsoleUtils.ShowError($"{e.GetType()}: {e.Message} Occurred " +
                                        $"{e.StackTrace?.Split("\r\n").FirstOrDefault()?.Replace("   ", "")}");
             }
         }

@@ -85,6 +85,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  darq:
+    dependency: "direct main"
+    description:
+      name: darq
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.1"
   dart_style:
     dependency: "direct main"
     description:
