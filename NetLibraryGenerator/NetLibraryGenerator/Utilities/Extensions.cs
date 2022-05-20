@@ -100,7 +100,7 @@ namespace NetLibraryGenerator.Utilities
                 } else if (type.Primitive == PrimitiveType.Object) {
                     typeReference = new CodeTypeReference(typeof(object));
                 } else if (type.Primitive == PrimitiveType.Date) {
-                    typeReference = new CodeTypeReference(typeof(DateTime));
+                    typeReference = new CodeTypeReference("DateTime");
                 } else if (type.Primitive == PrimitiveType.Array) {
                     typeReference = new CodeTypeReference("List");
                 } else if (type.Primitive == PrimitiveType.Dictionary) {

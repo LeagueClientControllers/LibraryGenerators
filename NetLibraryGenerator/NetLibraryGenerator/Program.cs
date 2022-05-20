@@ -9,6 +9,7 @@ using NetLibraryGenerator.SchemeModel;
 using NetLibraryGenerator.Utilities;
     
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace NetLibraryGenerator
 {
@@ -17,11 +18,11 @@ namespace NetLibraryGenerator
         private const string SUPPORTED_SCHEME_VERSION = "1.1.0";
 
         private static ApiScheme? _scheme;
-
+        
         private static async Task Main(string[] args)
         {
             Console.ForegroundColor = ConsoleUtils.DEFAULT_COLOR;
-            
+
             try {
                 await Parser.Default.ParseArguments<CommandLineOptions>(args).MapResult(Run,
                     _ => {

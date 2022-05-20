@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:dart_library_generator/src/convertors.dart';
 import 'package:path/path.dart' as path;
 
 import 'package:code_builder/code_builder.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:recase/recase.dart';
 
 import '../model/local_entity_declaration.dart';
@@ -17,6 +17,7 @@ import '../scheme_model/api_entity_property.dart';
 import '../scheme_model/api_enum.dart';
 import '../scheme_model/api_enum_member.dart';
 import '../scheme_model/api_model.dart';
+import '../scheme_model/api_property_type.dart';
 import '../utils/console_utilities.dart';
 import '../utils/generation_utilities.dart';
 import 'config.dart';
@@ -139,8 +140,19 @@ LocalModelEntity _generateEntity(ApiEntity entity, List<LocalEntityDeclaration> 
             entityField.type = new TypeReference((tB) => property.type.fillBuilder(tB, modelDeclarations));
             entityField.annotations.add(InvokeExpression.newOf(
               refer(JSON_KEY_ANNOTATION_NAME), 
-              [], 
-              { "name": new CodeExpression(new Code('"${property.jsonName}"')) }));
+              [],
+              property.type.primitive != PrimitiveType.Date ? {
+                "name": new CodeExpression(new Code('"${property.jsonName}"')),
+              } : {
+                "name": new CodeExpression(new Code('"${property.jsonName}"')),
+
+                "fromJson": new CodeExpression(new Code(
+                    property.type.nullable ? "unixTimestampToDateTimeNullable" : "unixTimestampToDateTime")),
+
+                "toJson": new CodeExpression(new Code(
+                    property.type.nullable ? "dateTimeToUnixTimestampNullable" : "dateTimeToUnixTimestamp"))
+              }
+            ));
 
             if ((declaration.kind == ApiEntityKind.Response || declaration.name == API_RESPONSE_MODEL_NAME) && !property.type.nullable) {
               entityField.late = true;

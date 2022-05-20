@@ -88,6 +88,7 @@ extension ImportExtension on LibraryBuilder {
         ..add(Directive.import(MODEL_EXPORTS_URL))
         ..add(Directive.import(JSON_ANNOTATIONS_URL))
         ..add(Directive.import(SERIALIZABLE_CLASS_URL))
+        ..add(Directive.import("package:dart_library_generator/utilities.dart"))
         ..add(Directive.import("package:decimal/decimal.dart"));
   }
 
@@ -98,7 +99,7 @@ extension ImportExtension on LibraryBuilder {
   void addCategoryAbstractionImports() {
     directives
         ..add(Directive.import("dart:async"))
-        ..add(Directive.import("package:dart_library_generator/annotations.dart"))
+        ..add(Directive.import("package:dart_library_generator/utilities.dart"))
         ..add(Directive.import(MODEL_EXPORTS_URL));
   }
 

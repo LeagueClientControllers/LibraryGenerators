@@ -8,6 +8,9 @@ using System.Diagnostics.CodeAnalysis;
 
 using NetLibraryGenerator.Model.Results;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
 namespace NetLibraryGenerator.Core
 {
     [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
@@ -176,6 +179,13 @@ namespace NetLibraryGenerator.Core
                         }
                     }
 
+                    if (property.Type.Primitive == PrimitiveType.Date) {
+                        modifiableEntityProperty.CustomAttributes.Add(new CodeAttributeDeclaration(
+                            new CodeTypeReference("JsonConverter"), 
+                            new CodeAttributeArgument(new CodeTypeOfExpression(
+                                new CodeTypeReference("UnixDateTimeConverter")))));
+                    }
+
                     if (property.InitialValue is not null) {
                         @private.InitExpression = new CodePrimitiveExpression(property.InitialValue);
                     }
@@ -197,6 +207,13 @@ namespace NetLibraryGenerator.Core
                         if (referenceType.Kind == ApiEntityKind.Enum) {
                             entityProperty.CustomAttributes.Add(BuildJsonEnumConverterAttributeDeclaration(referenceType.Name));
                         }
+                    }
+                    
+                    if (property.Type.Primitive == PrimitiveType.Date) {
+                        entityProperty.CustomAttributes.Add(new CodeAttributeDeclaration(
+                            new CodeTypeReference(typeof(JsonConverter)), 
+                            new CodeAttributeArgument(new CodeTypeOfExpression(
+                                new CodeTypeReference(typeof(UnixDateTimeConverter))))));
                     }
 
                     string namePostfix = " { get; set; }//";                
