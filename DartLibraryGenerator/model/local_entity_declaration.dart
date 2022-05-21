@@ -17,7 +17,7 @@ class LocalEntityDeclaration {
   static String _toLocalPath(String entityPath) {
     String result = "";
 
-    List<String> splittedPath = entityPath.split(r'\');
+    List<String> splittedPath = entityPath.split(r'/');
     for (var i = 0; i < splittedPath.length; i++) {
       if (i != splittedPath.length - 1) {
         result = path.join(result, splittedPath[i].snakeCase);
