@@ -134,7 +134,7 @@ List<ApiMethod> _checkAbstractionMethods(String oldAbstractionContent, String ne
   return changedMethods;
 }
 
-String _mergeImplementationMethods(String oldImplementationContent, String newImplementationContent, 
+String _mergeImplementationMethods(String oldImplementationContent, String newImplementationContent,
     CompilationUnit oldImplementation, CompilationUnit newImplementation, List<SyntacticMethod> methods, 
     List<ApiMethod> changedMethods) {
   int offset = 0;
@@ -157,7 +157,7 @@ String _mergeImplementationMethods(String oldImplementationContent, String newIm
       if (changedMethod.name == method.apiMethod.name) {
         mergedImplementationContent = mergedImplementationContent.replaceRange(method.newMethod.sortedCommentAndAnnotations.last.end + offset + 1, 
             method.newMethod.sortedCommentAndAnnotations.last.end + offset + 1, "\r\n  // TODO: Needs revision due to a new method signature\r\n");
-        offset += 57;
+        offset += 59;
         break;
       }
     }
